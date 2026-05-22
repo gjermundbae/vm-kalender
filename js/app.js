@@ -116,7 +116,6 @@
       const start = new Date(m.datetime);
       const end = new Date(start.getTime() + MATCH_DURATION_MS);
       const summary = `${m.home.name} – ${m.away.name}`;
-      const description = `${m.broadcaster}.`;
 
       lines.push(
         "BEGIN:VEVENT",
@@ -125,7 +124,7 @@
         `DTSTART:${formatIcsUtc(start)}`,
         `DTEND:${formatIcsUtc(end)}`,
         `SUMMARY:${escapeIcsText(summary)}`,
-        `DESCRIPTION:${escapeIcsText(description)}`,
+        `LOCATION:${escapeIcsText(m.broadcaster)}`,
         `CATEGORIES:${escapeIcsText("Fotball-VM 2026")}`,
         "END:VEVENT"
       );
