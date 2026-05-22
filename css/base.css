@@ -1,0 +1,399 @@
+:root {
+  --color-primary: #163d30;
+  --color-primary-mid: #2a5c48;
+  --color-text-muted: #5f7f6f;
+  --color-heading: #121a24;
+  --color-card: #f8f6ee;
+  --color-card-hover: #f0ede3;
+  --color-card-selected: #e6e2d4;
+  --color-bg: #ffffff;
+  --color-divider: #c8d9cf;
+  --font-sans: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  --row-height: 4.5rem;
+  --time-col: 6rem;
+  --radius-card: 4px;
+  --transition: 140ms ease;
+  --content-max: 44rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.35;
+  color: var(--color-primary);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Header */
+.app-header {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 2rem 1.5rem 1.5rem;
+}
+
+.app-title {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-heading);
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.875rem 1.5rem;
+}
+
+/* Sort toggle */
+.sort-toggle {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 6px;
+  background: #eef2ef;
+}
+
+.sort-toggle__btn {
+  padding: 0.4rem 0.9rem;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition),
+    box-shadow var(--transition);
+}
+
+.sort-toggle__btn:hover:not(.is-active) {
+  color: var(--color-primary);
+}
+
+.sort-toggle__btn.is-active {
+  background: var(--color-bg);
+  color: var(--color-primary);
+  box-shadow: 0 1px 3px rgba(18, 26, 36, 0.08);
+}
+
+.sort-toggle__btn:focus-visible {
+  outline: 2px solid var(--color-primary-mid);
+  outline-offset: 1px;
+}
+
+.selection-count {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  letter-spacing: 0.01em;
+}
+
+.btn-download {
+  margin-left: auto;
+  padding: 0.5rem 1rem;
+  border: 1.5px solid var(--color-primary);
+  border-radius: 4px;
+  background: var(--color-primary);
+  color: #fff;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition),
+    opacity var(--transition);
+}
+
+.btn-download:hover:not(:disabled) {
+  background: var(--color-primary-mid);
+  border-color: var(--color-primary-mid);
+}
+
+.btn-download:disabled {
+  background: transparent;
+  border-color: var(--color-divider);
+  color: var(--color-text-muted);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.btn-download:focus-visible {
+  outline: 2px solid var(--color-primary-mid);
+  outline-offset: 2px;
+}
+
+/* Main list */
+.app-main {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+}
+
+.section-heading {
+  margin: 1.75rem 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.section-heading:first-child {
+  margin-top: 0;
+}
+
+.section-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+/* Match row — ett kort, dato diskret i tidskolonnen */
+.match-row {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.match-row--group-start {
+  margin-top: 1.25rem;
+}
+
+.match-row--group-start:first-child,
+.section-matches > .match-row--group-start:first-child {
+  margin-top: 0;
+}
+
+.match-row:focus-visible {
+  outline: none;
+}
+
+.match-row:focus-visible .match-card {
+  outline: 2px solid var(--color-primary-mid);
+  outline-offset: 2px;
+}
+
+/* Kampkort */
+.match-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--time-col) 1fr;
+  align-items: stretch;
+  min-height: var(--row-height);
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  transition: background var(--transition), box-shadow var(--transition);
+}
+
+.match-row:hover .match-card {
+  background: var(--color-card-hover);
+}
+
+.match-row.is-selected .match-card {
+  background: var(--color-card-selected);
+  box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+.match-row.is-selected:hover .match-card {
+  background: var(--color-card-selected);
+}
+
+.match-card__time {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.1rem;
+  padding: 0.625rem 0.875rem 0.625rem 1rem;
+  border-right: 1px solid var(--color-divider);
+}
+
+.match-card__date {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.1rem;
+}
+
+.match-card__time-value {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.match-card__channel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  line-height: 1.2;
+}
+
+.match-card__info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.625rem 2rem 0.625rem 1rem;
+  min-width: 0;
+}
+
+.match-card__teams {
+  margin: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.25;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.match-card__team {
+  white-space: nowrap;
+}
+
+.match-card__flags {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.match-card__flag {
+  font-size: 0.9375rem;
+  line-height: 1;
+}
+
+.match-card__sep {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary-mid);
+  letter-spacing: 0;
+}
+
+.match-card__meta {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  line-height: 1.2;
+}
+
+.match-card__group,
+.match-card__venue {
+  color: inherit;
+}
+
+.match-card__meta-sep {
+  margin: 0 0.3rem;
+  opacity: 0.65;
+}
+
+.match-card__check {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: var(--color-primary);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.match-row.is-selected .match-card__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+  :root {
+    --row-height: auto;
+    --time-col: 5.5rem;
+  }
+
+  .app-header {
+    padding: 1.5rem 1rem 1.25rem;
+  }
+
+  .app-main {
+    padding: 0 1rem 3rem;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-download {
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  .match-card {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .match-card__time {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.5rem;
+    border-right: none;
+    border-bottom: 1px solid var(--color-divider);
+    padding: 0.55rem 0.875rem;
+  }
+
+  .match-card__info {
+    padding: 0.55rem 2rem 0.55rem 0.875rem;
+  }
+}
+

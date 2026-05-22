@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="nb">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VM 2026 — mine kamper</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/pdf.css" />
+  </head>
+  <body>
+    <header class="app-header no-print">
+      <h1 class="app-title">VM 2026 — mine kamper</h1>
+      <div class="controls">
+        <div class="sort-toggle" role="group" aria-label="Sorter kamper">
+          <button
+          type="button"
+          class="sort-toggle__btn is-active"
+          data-sort="time"
+          aria-pressed="true"
+          >
+          Tid
+        </button>
+        <button
+          type="button"
+          class="sort-toggle__btn"
+          data-sort="group"
+          aria-pressed="false"
+        >
+          Gruppe
+        </button>
+        </div>
+        <p class="selection-count" id="selection-count" hidden>
+          <span id="selection-count-num">0</span> kamper valgt
+        </p>
+        <button
+          type="button"
+          class="btn-download"
+          id="btn-download"
+          disabled
+          title="Velg minst én kamp før nedlasting"
+        >
+          Last ned valgte
+        </button>
+      </div>
+    </header>
+
+    <main class="app-main no-print">
+      <section id="match-list" class="match-list" aria-label="Kamper"></section>
+    </main>
+
+    <div id="print-root" class="print-root" aria-hidden="true"></div>
+
+    <script src="js/vendor/html2pdf.bundle.min.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

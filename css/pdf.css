@@ -1,0 +1,117 @@
+/* PDF-eksport (html2pdf fanger DOM — ikke kun @media print) */
+.print-root {
+  display: none;
+}
+
+.print-root.print-root--exporting {
+  display: block;
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  z-index: -1;
+  width: 42rem;
+  padding: 1.5rem;
+  background: #fff;
+  color: #163d30;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  pointer-events: none;
+}
+
+.print-root .print-header {
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 2px solid #163d30;
+}
+
+.print-root .print-header h1 {
+  margin: 0 0 0.3rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #121a24;
+  letter-spacing: -0.02em;
+}
+
+.print-root .print-meta {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #5f7f6f;
+}
+
+.print-root .print-section-heading {
+  margin: 1.15rem 0 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #5f7f6f;
+}
+
+.print-root .print-section-heading:first-of-type {
+  margin-top: 0;
+}
+
+.print-root .print-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.print-root .print-match__body {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  align-items: stretch;
+  background: #f8f6ee;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.print-root .print-match__time {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.08rem;
+  padding: 0.4rem 0.6rem;
+  border-right: 1px solid #c8d9cf;
+  font-size: 0.8rem;
+}
+
+.print-root .print-match__date {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #5f7f6f;
+  margin-bottom: 0.05rem;
+}
+
+.print-root .print-match__time strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #163d30;
+}
+
+.print-root .print-match__channel {
+  color: #5f7f6f;
+  font-size: 0.72rem;
+}
+
+.print-root .print-match__info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.1rem;
+  padding: 0.4rem 0.65rem;
+}
+
+.print-root .print-match__teams {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #163d30;
+}
+
+.print-root .print-match__meta {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #5f7f6f;
+}
