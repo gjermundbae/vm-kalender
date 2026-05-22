@@ -445,24 +445,9 @@ ${baseTag}
   }
 
   /* === Bunntekst === */
-  .poster__footer {
-    position: relative;
-    margin-top: 2.5rem;
-    text-align: center;
-    font-family: var(--font-display);
-  }
 
-  .signoff {
-    font-weight: 700;
-    font-size: 1.6rem;
-    transform: rotate(-1deg);
-    display: inline-block;
-    background: var(--ink);
-    color: #fff7e2;
-    padding: 0.4rem 1.1rem;
-    border-radius: 999px;
-    box-shadow: 4px 4px 0 var(--accent);
-  }
+
+
 
   .meta {
     margin-top: 0.85rem;
@@ -552,7 +537,7 @@ ${baseTag}
 <body>
 
 <div class="topbar no-print">
-  <span class="topbar__hint">Velg «Last ned» for bilde til kjøleskap/melding, eller «Skriv ut» for papir/PDF.</span>
+  <span class="topbar__hint">Denne skikkelig kule plakaten kan du feste på kjøleskapet!</span>
   <button class="btn btn--ghost" type="button" onclick="window.close()">Lukk</button>
   <button class="btn btn--ghost" type="button" id="btn-print" onclick="window.print()">Skriv ut</button>
   <button class="btn btn--primary" type="button" id="btn-png">Last ned som bilde</button>
@@ -565,7 +550,7 @@ ${baseTag}
     <div class="poster__pre">min helt egen</div>
     <h1 class="poster__title">VM-PLAN<span class="ball">⚽</span></h1>
     <p class="poster__sub">
-      Fotball-VM 2026 i USA, Canada og Mexico —
+      Fotball-VM 2026 i USA, Canada og Mexico.
       <strong>${matchCount} ${matchWord}</strong> jeg <em>ikke</em> har lov å gå glipp av!
     </p>
   </header>
@@ -576,11 +561,7 @@ ${baseTag}
       : `<ol class="matches">${cards}</ol>`
   }
 
-  <footer class="poster__footer">
-    <div class="signoff">Heia! ⚽ 🎉</div>
-    <div class="meta">Laget ${escapeHtml(generatedLabel)} med VM-kalenderen</div>
-  </footer>
-</article>
+
 
 <script src="js/vendor/html-to-image.js"></script>
 <script>
