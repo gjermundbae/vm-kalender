@@ -58,9 +58,59 @@ body {
 
 .controls {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.875rem;
+}
+
+.controls-actions .btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.controls-actions .btn-download {
+  flex: 1 1 9rem;
+  min-width: 0;
+  text-align: center;
+}
+
+.controls-toolbar {
+  display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.875rem 1.5rem;
+  gap: 0.625rem 1rem;
+}
+
+.controls-toolbar .selection-count {
+  margin: 0 0 0 auto;
+  font-size: 0.75rem;
+}
+
+/* Sort + bulk-select — kompakt rad under hovedknappene */
+.controls-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.controls-toolbar .sort-toggle,
+.controls-toolbar .select-toggle {
+  padding: 2px;
+  border-radius: 5px;
+}
+
+.controls-toolbar .sort-toggle__btn,
+.controls-toolbar .select-toggle__btn {
+  padding: 0.3rem 0.72rem;
+  font-size: 0.75rem;
+  border-radius: 3px;
+}
+
+.controls-toolbar .select-toggle__btn {
+  box-shadow: 0 1px 2px rgba(18, 26, 36, 0.06);
 }
 
 /* Sort toggle */
@@ -102,6 +152,54 @@ body {
   outline-offset: 1px;
 }
 
+/* Velg alle / fjern alle — samme pill-språk som sort-toggle */
+.select-toggle {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 6px;
+  background: #eef2ef;
+}
+
+.select-toggle__btn {
+  padding: 0.4rem 0.95rem;
+  border: none;
+  border-radius: 4px;
+  background: var(--color-bg);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-primary);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(18, 26, 36, 0.08);
+  transition: background var(--transition), color var(--transition),
+    box-shadow var(--transition), transform var(--transition);
+}
+
+.select-toggle__btn:hover {
+  background: var(--color-card-hover);
+}
+
+.select-toggle__btn:active {
+  transform: scale(0.98);
+}
+
+.select-toggle__btn.is-all-selected {
+  background: var(--color-card-selected);
+  color: var(--color-primary-mid);
+  box-shadow: inset 0 0 0 1px var(--color-divider);
+}
+
+.select-toggle__btn.is-all-selected:hover {
+  background: var(--color-card-hover);
+  color: var(--color-primary);
+}
+
+.select-toggle__btn:focus-visible {
+  outline: 2px solid var(--color-primary-mid);
+  outline-offset: 1px;
+}
+
 .selection-count {
   margin: 0;
   font-size: 0.8125rem;
@@ -114,7 +212,6 @@ body {
   display: inline-flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-left: auto;
 }
 
 .btn-download {
@@ -150,8 +247,7 @@ body {
   outline-offset: 2px;
 }
 
-/* Sekundærknapp – samme form, lysere fyll, så den primære calendar-knappen
- * fortsatt er den åpenbare hovedhandlingen. */
+/* Outline-knapper i header — plakat og kalender deler samme vekt. */
 .btn-download--secondary {
   background: transparent;
   color: var(--color-primary);
@@ -392,18 +488,16 @@ body {
     padding: 0 1rem 3rem;
   }
 
-  .controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .btn-group {
+  .controls-toolbar .selection-count {
     margin-left: 0;
     width: 100%;
+  }
+
+  .controls-actions .btn-group {
     flex-direction: column;
   }
 
-  .btn-download {
+  .controls-actions .btn-download {
     width: 100%;
     text-align: center;
   }

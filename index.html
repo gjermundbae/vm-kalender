@@ -10,46 +10,62 @@
     <header class="app-header no-print">
       <h1 class="app-title">VM-kalenderen</h1>
       <div class="controls">
-        <div class="sort-toggle" role="group" aria-label="Sorter kamper">
-          <button
-          type="button"
-          class="sort-toggle__btn is-active"
-          data-sort="time"
-          aria-pressed="true"
-          >
-          Tid
-        </button>
-        <button
-          type="button"
-          class="sort-toggle__btn"
-          data-sort="group"
-          aria-pressed="false"
-        >
-          Gruppe
-        </button>
+        <div class="controls-actions">
+          <div class="btn-group">
+            <button
+              type="button"
+              class="btn-download btn-download--secondary"
+              id="btn-poster"
+              disabled
+              title="Velg minst én kamp før du lager plakat"
+            >
+              Lag VM-plakat
+            </button>
+            <button
+              type="button"
+              class="btn-download btn-download--secondary"
+              id="btn-download"
+              disabled
+              title="Velg minst én kamp før du legger til i kalender"
+            >
+              Legg til i kalender
+            </button>
+          </div>
         </div>
-        <p class="selection-count" id="selection-count" hidden>
-          <span id="selection-count-num">0</span> kamper valgt
-        </p>
-        <div class="btn-group">
-          <button
-            type="button"
-            class="btn-download btn-download--secondary"
-            id="btn-poster"
-            disabled
-            title="Velg minst én kamp før du lager plakat"
-          >
-            Lag VM-plakat
-          </button>
-          <button
-            type="button"
-            class="btn-download"
-            id="btn-download"
-            disabled
-            title="Velg minst én kamp før nedlasting"
-          >
-            Last ned kalender (.ics)
-          </button>
+        <div class="controls-toolbar">
+          <div class="controls-cluster">
+            <div class="sort-toggle" role="group" aria-label="Sorter kamper">
+              <button
+                type="button"
+                class="sort-toggle__btn is-active"
+                data-sort="time"
+                aria-pressed="true"
+              >
+                Tid
+              </button>
+              <button
+                type="button"
+                class="sort-toggle__btn"
+                data-sort="group"
+                aria-pressed="false"
+              >
+                Gruppe
+              </button>
+            </div>
+            <div class="select-toggle" role="group" aria-label="Velg alle kamper">
+              <button
+                type="button"
+                class="select-toggle__btn"
+                id="btn-select-all"
+                aria-pressed="false"
+              >
+                Velg alle
+              </button>
+            </div>
+          </div>
+          <p class="selection-count" id="selection-count" hidden>
+            <span id="selection-count-num">0</span> kamper valgt
+          </p>
         </div>
       </div>
     </header>

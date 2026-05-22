@@ -2,7 +2,7 @@
   "use strict";
 
   const ICS_FILENAME = "vm-2026-mine-kamper.ics";
-  const BTN_LABEL_DEFAULT = "Last ned kalender (.ics)";
+  const BTN_LABEL_DEFAULT = "Legg til i kalender";
   const BTN_LABEL_LOADING = "Lager fil …";
   const MATCH_DURATION_MS = 2 * 60 * 60 * 1000;
 
@@ -16,16 +16,47 @@
   const selectionCountNumEl = document.getElementById("selection-count-num");
   const btnDownloadEl = document.getElementById("btn-download");
   const btnPosterEl = document.getElementById("btn-poster");
+  const btnSelectAllEl = document.getElementById("btn-select-all");
   const sortButtons = document.querySelectorAll(".sort-toggle__btn");
+
+  function allMatchesSelected() {
+    return (
+      window.MATCHES.length > 0 &&
+      state.selectedIds.size === window.MATCHES.length
+    );
+  }
+
+  function updateSelectAllButton() {
+    const all = allMatchesSelected();
+    btnSelectAllEl.textContent = all ? "Fjern alle" : "Velg alle";
+    btnSelectAllEl.classList.toggle("is-all-selected", all);
+    btnSelectAllEl.setAttribute("aria-pressed", String(all));
+    btnSelectAllEl.title = all
+      ? "Fjern markering på alle kamper"
+      : "Marker alle kamper i listen";
+  }
+
+  function toggleSelectAll() {
+    if (allMatchesSelected()) {
+      state.selectedIds.clear();
+    } else {
+      for (const m of window.MATCHES) {
+        state.selectedIds.add(m.id);
+      }
+    }
+    updateChrome();
+    render();
+  }
 
   function updateChrome() {
     const n = state.selectedIds.size;
     selectionCountNumEl.textContent = String(n);
     selectionCountEl.hidden = n === 0;
+    updateSelectAllButton();
     btnDownloadEl.disabled = n === 0;
     btnDownloadEl.title =
       n === 0
-        ? "Velg minst én kamp før nedlasting"
+        ? "Velg minst én kamp før du legger til i kalender"
         : "Last ned .ics-fil du kan importere i kalenderen din";
     btnPosterEl.disabled = n === 0;
     btnPosterEl.title =
@@ -188,6 +219,7 @@
   btnDownloadEl.textContent = BTN_LABEL_DEFAULT;
   btnDownloadEl.addEventListener("click", downloadIcs);
   btnPosterEl.addEventListener("click", openPoster);
+  btnSelectAllEl.addEventListener("click", toggleSelectAll);
 
   updateChrome();
   render();
