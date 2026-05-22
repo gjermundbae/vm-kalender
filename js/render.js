@@ -1,10 +1,20 @@
 (function () {
   "use strict";
 
-  /** ISO 3166-1 alpha-3 → ISO 3166-1 alpha-2 (for flag-emoji regional indicators).
-   *  ENG/SCO faller tilbake til GB (Storbritannia) siden emoji-flagg for nasjoner
-   *  innen Storbritannia (gbeng/gbsct) ikke er pålitelig støttet på tvers av OS-er. */
+  /** Tag-sekvens-flagg for nasjoner innen Storbritannia (RFC emoji tag sequence). */
+  function tagFlagEmoji(...letters) {
+    const TAG_BASE = 0xe0000;
+    return String.fromCodePoint(
+      0x1f3f4,
+      ...letters.map((c) => TAG_BASE + c.toLowerCase().charCodeAt(0))
+    );
+  }
+
+  /** ISO 3166-1 alpha-3 → flagg-emoji (regional indicators eller tag-sekvens). */
   function flagEmoji(code) {
+    if (code === "ENG") return tagFlagEmoji("g", "b", "e", "n", "g");
+    if (code === "SCO") return tagFlagEmoji("g", "b", "s", "c", "t");
+
     const map = {
       ARG: "AR",
       AUS: "AU",
@@ -24,7 +34,6 @@
       DZA: "DZ",
       ECU: "EC",
       EGY: "EG",
-      ENG: "GB",
       ESP: "ES",
       FRA: "FR",
       GHA: "GH",
@@ -45,7 +54,6 @@
       PRY: "PY",
       QAT: "QA",
       SAU: "SA",
-      SCO: "GB",
       SEN: "SN",
       SWE: "SE",
       TUN: "TN",
