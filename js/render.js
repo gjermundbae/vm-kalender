@@ -271,79 +271,9 @@
     }
   }
 
-  /**
-   * @param {HTMLElement} container
-   * @param {typeof window.MATCHES} allMatches
-   * @param {Set<string>} selectedIds
-   * @param {'group' | 'time'} sortMode
-   */
-  function renderPrintSummary(container, allMatches, selectedIds, sortMode) {
-    const selected = allMatches.filter((m) => selectedIds.has(m.id));
-    if (selected.length === 0) {
-      container.replaceChildren();
-      return;
-    }
-
-    const sections = buildSections(selected, sortMode);
-    const generated = new Date().toLocaleDateString("nb-NO", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-
-    container.replaceChildren();
-
-    const header = document.createElement("header");
-    header.className = "print-header";
-    header.innerHTML =
-      `<h1>⚽ VM 2026 — kamper jeg vil se</h1>` +
-      `<p class="print-tagline">Min kampplan — klar for sofa og snacks</p>` +
-      `<p class="print-meta">Generert ${generated} · ${selected.length} kamper</p>`;
-    container.appendChild(header);
-
-    for (const section of sections) {
-      if (section.heading) {
-        const h2 = document.createElement("h2");
-        h2.className = "print-section-heading";
-        h2.textContent = section.heading;
-        container.appendChild(h2);
-      }
-
-      const list = document.createElement("div");
-      list.className = "print-matches";
-
-      section.matches.forEach((match, i) => {
-        const item = document.createElement("article");
-        item.className = "print-match";
-
-        const dateLine = section.showDateAt[i]
-          ? `<span class="print-match__date">${match.dateLabel}</span>`
-          : "";
-
-        item.innerHTML = `
-          <div class="print-match__body">
-            <div class="print-match__time">
-              ${dateLine}
-              <strong>${match.timeLabel}</strong>
-              <span class="print-match__channel">${match.broadcaster}</span>
-            </div>
-            <div class="print-match__info">
-              <p class="print-match__teams">${formatTeams(match)}</p>
-              <p class="print-match__meta">Pulje ${match.group} · ${match.venue}</p>
-            </div>
-          </div>
-        `;
-        list.appendChild(item);
-      });
-
-      container.appendChild(list);
-    }
-  }
-
   window.VMRender = {
     buildSections,
     renderList,
-    renderPrintSummary,
     flagEmoji,
   };
 })();

@@ -1,9 +1,10 @@
 (function () {
   "use strict";
 
-  const PDF_FILENAME = "vm-2026-mine-kamper.pdf";
-  const BTN_LABEL_DEFAULT = "Last ned valgte";
-  const BTN_LABEL_LOADING = "Laster ned …";
+  const ICS_FILENAME = "vm-2026-mine-kamper.ics";
+  const BTN_LABEL_DEFAULT = "Last ned kalender (.ics)";
+  const BTN_LABEL_LOADING = "Lager fil …";
+  const MATCH_DURATION_MS = 2 * 60 * 60 * 1000;
 
   const state = {
     sortMode: "time",
@@ -14,7 +15,6 @@
   const selectionCountEl = document.getElementById("selection-count");
   const selectionCountNumEl = document.getElementById("selection-count-num");
   const btnDownloadEl = document.getElementById("btn-download");
-  const printRootEl = document.getElementById("print-root");
   const sortButtons = document.querySelectorAll(".sort-toggle__btn");
 
   function updateChrome() {
@@ -25,7 +25,7 @@
     btnDownloadEl.title =
       n === 0
         ? "Velg minst én kamp før nedlasting"
-        : "Last ned PDF med valgte kamper";
+        : "Last ned .ics-fil du kan importere i kalenderen din";
   }
 
   function toggleSelection(id) {
@@ -58,56 +58,101 @@
     render();
   }
 
-  /** html2canvas needs a painted frame before capture. */
-  async function waitForPaint() {
-    if (document.fonts?.ready) {
-      await document.fonts.ready;
-    }
-    await new Promise((resolve) => {
-      requestAnimationFrame(() => requestAnimationFrame(resolve));
-    });
+  /** UTC-basert ICS-tidsstempel "YYYYMMDDTHHMMSSZ" (RFC 5545). */
+  function formatIcsUtc(date) {
+    const pad = (n) => String(n).padStart(2, "0");
+    return (
+      date.getUTCFullYear() +
+      pad(date.getUTCMonth() + 1) +
+      pad(date.getUTCDate()) +
+      "T" +
+      pad(date.getUTCHours()) +
+      pad(date.getUTCMinutes()) +
+      pad(date.getUTCSeconds()) +
+      "Z"
+    );
   }
 
-  async function downloadPdf() {
-    if (state.selectedIds.size === 0 || typeof html2pdf === "undefined") return;
+  /** Escape iht. RFC 5545 §3.3.11 for TEXT-verdier. */
+  function escapeIcsText(text) {
+    return text
+      .replace(/\\/g, "\\\\")
+      .replace(/;/g, "\\;")
+      .replace(/,/g, "\\,")
+      .replace(/\r?\n/g, "\\n");
+  }
 
-    window.VMRender.renderPrintSummary(
-      printRootEl,
-      window.MATCHES,
-      state.selectedIds,
-      state.sortMode
-    );
+  /** Bryt linjer ved 75 oktetter (RFC 5545 §3.1). Forenklet: teller chars,
+   *  som er trygt så lenge innholdet stort sett er ASCII + et lite knippe
+   *  nordiske bokstaver. Fortsettelseslinjer starter med ett mellomrom. */
+  function foldIcsLine(line) {
+    if (line.length <= 75) return line;
+    const out = [line.slice(0, 75)];
+    for (let i = 75; i < line.length; i += 74) {
+      out.push(" " + line.slice(i, i + 74));
+    }
+    return out.join("\r\n");
+  }
 
-    printRootEl.classList.add("print-root--exporting");
-    printRootEl.setAttribute("aria-hidden", "false");
+  function buildIcs(matches) {
+    const dtstamp = formatIcsUtc(new Date());
+    const lines = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//VM 2026//Mine kamper//NB",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      "X-WR-CALNAME:VM 2026 — mine kamper",
+      "X-WR-TIMEZONE:Europe/Oslo",
+    ];
+
+    for (const m of matches) {
+      const start = new Date(m.datetime);
+      const end = new Date(start.getTime() + MATCH_DURATION_MS);
+      const summary = `${m.home.name} – ${m.away.name}`;
+      const description = `${m.broadcaster}.`;
+
+      lines.push(
+        "BEGIN:VEVENT",
+        `UID:vm2026-${m.id}@vm-kalender`,
+        `DTSTAMP:${dtstamp}`,
+        `DTSTART:${formatIcsUtc(start)}`,
+        `DTEND:${formatIcsUtc(end)}`,
+        `SUMMARY:${escapeIcsText(summary)}`,
+        `DESCRIPTION:${escapeIcsText(description)}`,
+        `CATEGORIES:${escapeIcsText("Fotball-VM 2026")}`,
+        "END:VEVENT"
+      );
+    }
+
+    lines.push("END:VCALENDAR");
+    return lines.map(foldIcsLine).join("\r\n") + "\r\n";
+  }
+
+  function downloadIcs() {
+    if (state.selectedIds.size === 0) return;
 
     btnDownloadEl.disabled = true;
     btnDownloadEl.textContent = BTN_LABEL_LOADING;
 
     try {
-      await waitForPaint();
+      const selected = window.MATCHES
+        .filter((m) => state.selectedIds.has(m.id))
+        .sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
 
-      await html2pdf()
-        .set({
-          margin: [12, 12, 12, 12],
-          filename: PDF_FILENAME,
-          image: { type: "jpeg", quality: 0.95 },
-          html2canvas: {
-            scale: 2,
-            logging: false,
-            backgroundColor: "#fffef8",
-            scrollX: 0,
-            scrollY: 0,
-          },
-          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-          pagebreak: { mode: ["css", "legacy"] },
-        })
-        .from(printRootEl)
-        .save();
+      const ics = buildIcs(selected);
+      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = ICS_FILENAME;
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 0);
     } finally {
-      printRootEl.classList.remove("print-root--exporting");
-      printRootEl.replaceChildren();
-      printRootEl.setAttribute("aria-hidden", "true");
       btnDownloadEl.textContent = BTN_LABEL_DEFAULT;
       updateChrome();
     }
@@ -121,7 +166,8 @@
     });
   });
 
-  btnDownloadEl.addEventListener("click", downloadPdf);
+  btnDownloadEl.textContent = BTN_LABEL_DEFAULT;
+  btnDownloadEl.addEventListener("click", downloadIcs);
 
   updateChrome();
   render();
