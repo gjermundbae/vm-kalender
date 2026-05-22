@@ -125,10 +125,6 @@
       (a, b) => new Date(a.datetime) - new Date(b.datetime)
     );
     const cards = sorted.map(renderMatchCard).join("");
-    const generatedAt = new Date();
-    const generatedLabel =
-      `${generatedAt.getDate()}. ${MONTHS_NB[generatedAt.getMonth()]} ` +
-      `${generatedAt.getFullYear()}`;
     const matchCount = sorted.length;
     const matchWord = matchCount === 1 ? "kamp" : "kamper";
 
@@ -189,13 +185,6 @@ ${baseTag}
     align-items: center;
     justify-content: flex-end;
     flex-wrap: wrap;
-  }
-
-  .topbar__hint {
-    margin-right: auto;
-    font-size: 0.875rem;
-    color: var(--ink-soft);
-    font-weight: 600;
   }
 
   .btn {
@@ -444,17 +433,25 @@ ${baseTag}
     letter-spacing: 0.02em;
   }
 
-  /* === Bunntekst === */
+  /* === Bunntekst — luft under kampene + avslutning på plakaten === */
+  .poster__footer {
+    position: relative;
+    margin-top: 2.5rem;
+    padding-top: 0.25rem;
+    text-align: center;
+  }
 
-
-
-
-  .meta {
-    margin-top: 0.85rem;
+  .signoff {
+    margin: 0 auto;
+    display: block;
+    max-width: 30rem;
     font-family: var(--font-body);
     font-weight: 600;
-    font-size: 0.78rem;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    letter-spacing: 0.02em;
     color: var(--ink-soft);
+    opacity: 0.88;
   }
 
   /* === Tom tilstand === */
@@ -484,6 +481,8 @@ ${baseTag}
     }
 
     .poster {
+      display: flex;
+      flex-direction: column;
       max-width: none;
       width: 100%;
       min-height: 100vh;
@@ -519,14 +518,16 @@ ${baseTag}
       font-size: 15px;
     }
 
-    .signoff {
-      box-shadow: 2.5px 2.5px 0 var(--accent);
+    .poster__footer {
+      margin-top: auto;
+      padding-top: 1.5rem;
     }
   }
 
   /* Mobil-preview */
   @media (max-width: 600px) {
-    .poster { padding: 2rem 1.1rem 1.5rem; }
+    .poster { padding: 2rem 1.1rem 1.75rem; }
+    .poster__footer { margin-top: 2rem; }
     .match { grid-template-columns: 5.5rem 1fr; padding: 0.8rem 0.9rem; }
     .match__time { font-size: 1.6rem; }
     .match__teams { font-size: 1.05rem; }
@@ -537,7 +538,6 @@ ${baseTag}
 <body>
 
 <div class="topbar no-print">
-  <span class="topbar__hint">Denne skikkelig kule plakaten kan du feste på kjøleskapet!</span>
   <button class="btn btn--ghost" type="button" onclick="window.close()">Lukk</button>
   <button class="btn btn--ghost" type="button" id="btn-print" onclick="window.print()">Skriv ut</button>
   <button class="btn btn--primary" type="button" id="btn-png">Last ned som bilde</button>
@@ -561,7 +561,10 @@ ${baseTag}
       : `<ol class="matches">${cards}</ol>`
   }
 
-
+  <footer class="poster__footer">
+    <p class="signoff">Denne skikkelig kule plakaten kan du feste på kjøleskapet!</p>
+  </footer>
+</article>
 
 <script src="js/vendor/html-to-image.js"></script>
 <script>

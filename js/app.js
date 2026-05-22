@@ -4,6 +4,8 @@
   const ICS_FILENAME = "vm-2026-mine-kamper.ics";
   const BTN_LABEL_DEFAULT = "Legg til i kalender";
   const BTN_LABEL_LOADING = "Lager fil …";
+  const HINT_NEED_MATCH =
+    "Velg en kamp i listen først!";
   const MATCH_DURATION_MS = 2 * 60 * 60 * 1000;
 
   const state = {
@@ -16,6 +18,8 @@
   const selectionCountNumEl = document.getElementById("selection-count-num");
   const btnDownloadEl = document.getElementById("btn-download");
   const btnPosterEl = document.getElementById("btn-poster");
+  const hintPosterEl = document.getElementById("hint-poster");
+  const hintDownloadEl = document.getElementById("hint-download");
   const btnSelectAllEl = document.getElementById("btn-select-all");
   const sortButtons = document.querySelectorAll(".sort-toggle__btn");
 
@@ -54,15 +58,22 @@
     selectionCountEl.hidden = n === 0;
     updateSelectAllButton();
     btnDownloadEl.disabled = n === 0;
-    btnDownloadEl.title =
-      n === 0
-        ? "Velg minst én kamp før du legger til i kalender"
-        : "Last ned .ics-fil du kan importere i kalenderen din";
     btnPosterEl.disabled = n === 0;
-    btnPosterEl.title =
-      n === 0
-        ? "Velg minst én kamp før du lager plakat"
-        : "Åpne en lekker plakat du kan skrive ut eller lagre som PDF";
+    syncActionHint(hintPosterEl, btnPosterEl, n === 0);
+    syncActionHint(hintDownloadEl, btnDownloadEl, n === 0);
+  }
+
+  /** Disablede knapper får ikke hover — tipset sitter på wrapperen. */
+  function syncActionHint(wrapEl, buttonEl, needsMatch) {
+    if (needsMatch) {
+      wrapEl.dataset.tip = HINT_NEED_MATCH;
+      wrapEl.tabIndex = 0;
+      buttonEl.removeAttribute("title");
+    } else {
+      delete wrapEl.dataset.tip;
+      wrapEl.removeAttribute("tabindex");
+      buttonEl.removeAttribute("title");
+    }
   }
 
   function toggleSelection(id) {
