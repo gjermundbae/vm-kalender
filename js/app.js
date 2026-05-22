@@ -58,6 +58,16 @@
     render();
   }
 
+  /** html2canvas needs a painted frame before capture. */
+  async function waitForPaint() {
+    if (document.fonts?.ready) {
+      await document.fonts.ready;
+    }
+    await new Promise((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(resolve));
+    });
+  }
+
   async function downloadPdf() {
     if (state.selectedIds.size === 0 || typeof html2pdf === "undefined") return;
 
@@ -75,14 +85,22 @@
     btnDownloadEl.textContent = BTN_LABEL_LOADING;
 
     try {
+      await waitForPaint();
+
       await html2pdf()
         .set({
           margin: [12, 12, 12, 12],
           filename: PDF_FILENAME,
           image: { type: "jpeg", quality: 0.95 },
-          html2canvas: { scale: 2, logging: false },
+          html2canvas: {
+            scale: 2,
+            logging: false,
+            backgroundColor: "#fffef8",
+            scrollX: 0,
+            scrollY: 0,
+          },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-          pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+          pagebreak: { mode: ["css", "legacy"] },
         })
         .from(printRootEl)
         .save();

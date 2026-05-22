@@ -1,19 +1,59 @@
 (function () {
   "use strict";
 
-  /** ISO 3166-1 alpha-3 → flag emoji (first two letters as regional indicators). */
+  /** ISO 3166-1 alpha-3 → ISO 3166-1 alpha-2 (for flag-emoji regional indicators).
+   *  ENG/SCO faller tilbake til GB (Storbritannia) siden emoji-flagg for nasjoner
+   *  innen Storbritannia (gbeng/gbsct) ikke er pålitelig støttet på tvers av OS-er. */
   function flagEmoji(code) {
     const map = {
-      MEX: "MX",
-      ZAF: "ZA",
-      KOR: "KR",
-      CAN: "CA",
-      QAT: "QA",
-      CHE: "CH",
+      ARG: "AR",
+      AUS: "AU",
+      AUT: "AT",
+      BEL: "BE",
+      BIH: "BA",
       BRA: "BR",
-      MAR: "MA",
+      CAN: "CA",
+      CHE: "CH",
+      CIV: "CI",
+      COD: "CD",
+      COL: "CO",
+      CPV: "CV",
+      CUW: "CW",
+      CZE: "CZ",
+      DEU: "DE",
+      DZA: "DZ",
+      ECU: "EC",
+      EGY: "EG",
+      ENG: "GB",
+      ESP: "ES",
+      FRA: "FR",
+      GHA: "GH",
+      HRV: "HR",
       HTI: "HT",
+      IRN: "IR",
+      IRQ: "IQ",
+      JOR: "JO",
+      JPN: "JP",
+      KOR: "KR",
+      MAR: "MA",
+      MEX: "MX",
+      NLD: "NL",
+      NOR: "NO",
+      NZL: "NZ",
+      PAN: "PA",
+      PRT: "PT",
+      PRY: "PY",
+      QAT: "QA",
+      SAU: "SA",
       SCO: "GB",
+      SEN: "SN",
+      SWE: "SE",
+      TUN: "TN",
+      TUR: "TR",
+      URY: "UY",
+      USA: "US",
+      UZB: "UZ",
+      ZAF: "ZA",
     };
     const iso2 = map[code] || code.slice(0, 2);
     return [...iso2.toUpperCase()]
@@ -255,7 +295,10 @@
 
     const header = document.createElement("header");
     header.className = "print-header";
-    header.innerHTML = `<h1>VM 2026 — kamper jeg vil se</h1><p class="print-meta">Generert ${generated} · ${selected.length} kamper</p>`;
+    header.innerHTML =
+      `<h1>⚽ VM 2026 — kamper jeg vil se</h1>` +
+      `<p class="print-tagline">Min kampplan — klar for sofa og snacks</p>` +
+      `<p class="print-meta">Generert ${generated} · ${selected.length} kamper</p>`;
     container.appendChild(header);
 
     for (const section of sections) {
