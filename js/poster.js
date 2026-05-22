@@ -120,7 +120,7 @@
       .join("");
   }
 
-  function buildPosterHtml(matches) {
+  function buildPosterHtml(matches, opts) {
     const sorted = [...matches].sort(
       (a, b) => new Date(a.datetime) - new Date(b.datetime)
     );
@@ -132,15 +132,25 @@
     const matchCount = sorted.length;
     const matchWord = matchCount === 1 ? "kamp" : "kamper";
 
+    // Vi åpner popupen via window.open("") + document.write, så base-URL
+    // er "about:blank" og relative <script src>-stier funker ikke. Vi sender
+    // derfor inn opener-URL-en og bruker den som <base>.
+    const baseHref = (opts && opts.baseHref) || "";
+    const baseTag = baseHref ? `<base href="${escapeHtml(baseHref)}">` : "";
+
     return `<!DOCTYPE html>
 <html lang="nb">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+${baseTag}
 <title>Min VM-plakat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<!-- crossorigin på selve stylesheeten er viktig: ellers blokkerer browseren
+     html-to-image fra å lese CSS-reglene når den lager PNG-en, og fontene
+     blir ikke embeddet i bildet. -->
+<link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;800&display=swap">
 <style>
   :root {
     --paper: #fff6df;
@@ -215,6 +225,13 @@
     border: 2px solid var(--ink);
   }
   .btn--ghost:hover { background: var(--ink); color: #fff7e2; }
+
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: progress;
+    transform: none;
+  }
+  .btn--primary:disabled { box-shadow: 0 4px 0 #000; }
 
   /* === Selve plakaten === */
   .poster {
@@ -463,36 +480,58 @@
     color: var(--ink-soft);
   }
 
-  /* === Print === */
+  /* === Print ===
+   * Mål: ingen browser-marger/headers/footers ødelegger plakaten. Vi setter
+   * @page margin til 0 og lar plakaten dekke hele arket, men beholder noen
+   * mm "trygg sone" innvendig så ingen printer-hardware-marger kapper noe. */
   @page {
     size: A4 portrait;
-    margin: 12mm;
+    margin: 0;
   }
 
   @media print {
     .no-print { display: none !important; }
 
-    body {
-      background: #fff;
+    html, body {
+      background: var(--paper);
       padding: 0;
+      margin: 0;
     }
 
     .poster {
       max-width: none;
+      width: 100%;
+      min-height: 100vh;
       margin: 0;
-      padding: 1rem 1.25rem 1.25rem;
+      /* ~6mm intern padding er nok luft til at hardware-marger ikke
+       * spiser innhold, og holder seg under nettleserens advarsler. */
+      padding: 12mm 10mm;
       border-radius: 0;
       box-shadow: none;
       background-image: none;
       background: var(--paper);
-      /* Sørg for at fargene faktisk printes (ellers fjerner mange nettlesere
-       * bakgrunnsfarger som standard). */
+      /* Tving fargeutskrift – mange nettlesere fjerner ellers bakgrunner. */
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
 
     .match {
       box-shadow: 2.5px 2.5px 0 var(--ink);
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* Klistremerket henger normalt OVER kortets boks (top:-14px, right:-10px),
+     * noe som ser fint ut på skjerm men gjør at sideskifte i print klipper
+     * stickeren halvveis – siden break-inside: avoid bare beskytter selve
+     * kortets bounding-box. Flytt stickeren inn i boksen for print. */
+    .match__sticker {
+      top: 6px;
+      right: 6px;
+      box-shadow: none;
+      width: 32px;
+      height: 32px;
+      font-size: 15px;
     }
 
     .signoff {
@@ -513,9 +552,10 @@
 <body>
 
 <div class="topbar no-print">
-  <span class="topbar__hint">Tips: I print-dialogen kan du velge «Lagre som PDF»</span>
+  <span class="topbar__hint">Velg «Last ned» for bilde til kjøleskap/melding, eller «Skriv ut» for papir/PDF.</span>
   <button class="btn btn--ghost" type="button" onclick="window.close()">Lukk</button>
-  <button class="btn btn--primary" type="button" onclick="window.print()">Skriv ut / lagre som PDF</button>
+  <button class="btn btn--ghost" type="button" id="btn-print" onclick="window.print()">Skriv ut</button>
+  <button class="btn btn--primary" type="button" id="btn-png">Last ned som bilde</button>
 </div>
 
 <article class="poster">
@@ -542,9 +582,74 @@
   </footer>
 </article>
 
+<script src="js/vendor/html-to-image.js"></script>
 <script>
-  // Forsøk å gi et hyggelig navn på print-jobben / PDF-en
+(function () {
+  // Hyggelig navn på print-jobben / nedlasta fil.
   document.title = "Min VM-plakat";
+
+  const btn = document.getElementById("btn-png");
+  const printBtn = document.getElementById("btn-print");
+  const DEFAULT_LABEL = btn.textContent;
+
+  function setBusy(busy) {
+    btn.disabled = busy;
+    printBtn.disabled = busy;
+    btn.textContent = busy ? "Lager bilde …" : DEFAULT_LABEL;
+  }
+
+  async function downloadPng() {
+    if (!window.htmlToImage) {
+      alert("Kunne ikke laste bildemotoren. Sjekk nettverket og prøv igjen.");
+      return;
+    }
+    setBusy(true);
+    try {
+      // Vent på at custom-fontene faktisk er klare før vi snapshoter,
+      // ellers ender vi opp med fallback-typografi i bildet.
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+      const node = document.querySelector(".poster");
+
+      // html-to-image har en kjent quirk med sentrerte/posisjonerte noder:
+      // hvis vi ikke eksplisitt angir width/height og overstyrer margin,
+      // ender innholdet ofte skjøvet til siden i bildet. Vi bruker derfor
+      // bounding-rect-en til noden + en style-override som nuller margin
+      // og evt. transform under selve snapshottingen.
+      const rect = node.getBoundingClientRect();
+      const blob = await window.htmlToImage.toBlob(node, {
+        pixelRatio: 2,
+        cacheBust: true,
+        backgroundColor: "#fff6df",
+        width: Math.ceil(rect.width),
+        height: Math.ceil(rect.height),
+        style: {
+          margin: "0",
+          transform: "none",
+          maxWidth: "none",
+        },
+      });
+      if (!blob) throw new Error("tom blob");
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "min-vm-plakat.png";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+    } catch (err) {
+      console.error(err);
+      alert("Klarte ikke lage bildet: " + (err && err.message ? err.message : err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  btn.addEventListener("click", downloadPng);
+})();
 </script>
 
 </body>
@@ -558,7 +663,10 @@
    * @param {Array} matches
    */
   function openPoster(matches) {
-    const html = buildPosterHtml(matches);
+    // Popupen er about:blank, så vi må gi den en eksplisitt base-URL for at
+    // relative <script src> (html-to-image-biblioteket) skal kunne lastes.
+    const baseHref = new URL(".", window.location.href).href;
+    const html = buildPosterHtml(matches, { baseHref });
     const win = window.open("", "_blank");
     if (!win) return false;
     win.document.open();
