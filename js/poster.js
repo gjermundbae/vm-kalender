@@ -62,8 +62,9 @@
     const longDate = formatLongDate(match);
 
     return `
-      <li class="match"
-          style="--card-bg:${palette.bg};--card-ink:${palette.ink};--tilt:${tilt}deg">
+      <li class="match-slot">
+        <div class="match"
+             style="--card-bg:${palette.bg};--card-ink:${palette.ink};--tilt:${tilt}deg">
         <div class="match__sticker" aria-hidden="true">${stickerForIndex(index)}</div>
         <div class="match__when">
           <div class="match__date">${escapeHtml(longDate)}</div>
@@ -84,6 +85,7 @@
             <span class="match__dot" aria-hidden="true">•</span>
             <span class="match__channel">${escapeHtml(match.broadcaster)}</span>
           </div>
+        </div>
         </div>
       </li>
     `;
@@ -316,6 +318,12 @@ ${baseTag}
     gap: 1rem;
   }
 
+  /* Ytre listeelement uten transform — brukes ved print for sideskift + rotasjon. */
+  .match-slot {
+    margin: 0;
+    padding: 0;
+  }
+
   .match {
     position: relative;
     display: grid;
@@ -329,7 +337,6 @@ ${baseTag}
     border: 2.5px solid var(--ink);
     box-shadow: 4px 4px 0 var(--ink);
     transform: rotate(var(--tilt, 0deg));
-    break-inside: avoid;
   }
 
   .match__sticker {
@@ -468,7 +475,11 @@ ${baseTag}
    * mm "trygg sone" innvendig så ingen printer-hardware-marger kapper noe. */
   @page {
     size: A4 portrait;
-    margin: 0;
+    margin: 6mm 0 0;
+  }
+
+  @page :first {
+    margin-top: 0;
   }
 
   @media print {
@@ -499,16 +510,23 @@ ${baseTag}
       print-color-adjust: exact;
     }
 
+    /* Sideskift følger den flate wrappen; padding-top gir rom til rotasjon/skygge
+     * uten at hjørner stikker opp på forrige side. */
+    .match-slot {
+      break-inside: avoid;
+      page-break-inside: avoid;
+      /* Rom for rotasjon/skygge — wrappen roterer ikke, kortet inni gjør. */
+      padding-top: 2.5mm;
+    }
+
     .match {
       box-shadow: 2.5px 2.5px 0 var(--ink);
-      page-break-inside: avoid;
-      break-inside: avoid;
     }
 
     /* Klistremerket henger normalt OVER kortets boks (top:-14px, right:-10px),
      * noe som ser fint ut på skjerm men gjør at sideskifte i print klipper
-     * stickeren halvveis – siden break-inside: avoid bare beskytter selve
-     * kortets bounding-box. Flytt stickeren inn i boksen for print. */
+     * stickeren halvveis – siden break-inside: avoid bare beskytter wrappen.
+     * Flytt stickeren inn i boksen for print. */
     .match__sticker {
       top: 6px;
       right: 6px;
