@@ -15,6 +15,7 @@
   const selectionCountEl = document.getElementById("selection-count");
   const selectionCountNumEl = document.getElementById("selection-count-num");
   const btnDownloadEl = document.getElementById("btn-download");
+  const btnPosterEl = document.getElementById("btn-poster");
   const sortButtons = document.querySelectorAll(".sort-toggle__btn");
 
   function updateChrome() {
@@ -26,6 +27,11 @@
       n === 0
         ? "Velg minst én kamp før nedlasting"
         : "Last ned .ics-fil du kan importere i kalenderen din";
+    btnPosterEl.disabled = n === 0;
+    btnPosterEl.title =
+      n === 0
+        ? "Velg minst én kamp før du lager plakat"
+        : "Åpne en lekker plakat du kan skrive ut eller lagre som PDF";
   }
 
   function toggleSelection(id) {
@@ -158,6 +164,20 @@
     }
   }
 
+  function openPoster() {
+    if (state.selectedIds.size === 0) return;
+    const selected = window.MATCHES.filter((m) => state.selectedIds.has(m.id));
+    const ok = window.VMPoster.openPoster(selected);
+    if (!ok) {
+      // Popup-blokkering er den vanligste årsaken; gi en hjelpsom beskjed
+      // i stedet for å feile stille.
+      alert(
+        "Vinduet ble blokkert av nettleseren. Tillat popup for denne siden, " +
+        "så åpnes plakaten i en ny fane."
+      );
+    }
+  }
+
   sortButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       if (btn.dataset.sort !== state.sortMode) {
@@ -168,6 +188,7 @@
 
   btnDownloadEl.textContent = BTN_LABEL_DEFAULT;
   btnDownloadEl.addEventListener("click", downloadIcs);
+  btnPosterEl.addEventListener("click", openPoster);
 
   updateChrome();
   render();

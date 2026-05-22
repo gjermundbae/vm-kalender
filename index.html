@@ -31,15 +31,26 @@
         <p class="selection-count" id="selection-count" hidden>
           <span id="selection-count-num">0</span> kamper valgt
         </p>
-        <button
-          type="button"
-          class="btn-download"
-          id="btn-download"
-          disabled
-          title="Velg minst én kamp før nedlasting"
-        >
-          Last ned kalender (.ics)
-        </button>
+        <div class="btn-group">
+          <button
+            type="button"
+            class="btn-download btn-download--secondary"
+            id="btn-poster"
+            disabled
+            title="Velg minst én kamp før du lager plakat"
+          >
+            Lag VM-plakat
+          </button>
+          <button
+            type="button"
+            class="btn-download"
+            id="btn-download"
+            disabled
+            title="Velg minst én kamp før nedlasting"
+          >
+            Last ned kalender (.ics)
+          </button>
+        </div>
       </div>
     </header>
 
@@ -49,6 +60,7 @@
 
     <script src="js/data.js"></script>
     <script src="js/render.js"></script>
+    <script src="js/poster.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

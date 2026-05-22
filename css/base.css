@@ -110,8 +110,14 @@ body {
   letter-spacing: 0.01em;
 }
 
-.btn-download {
+.btn-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-left: auto;
+}
+
+.btn-download {
   padding: 0.5rem 1rem;
   border: 1.5px solid var(--color-primary);
   border-radius: 4px;
@@ -123,7 +129,7 @@ body {
   letter-spacing: 0.02em;
   cursor: pointer;
   transition: background var(--transition), border-color var(--transition),
-    opacity var(--transition);
+    color var(--transition), opacity var(--transition);
 }
 
 .btn-download:hover:not(:disabled) {
@@ -142,6 +148,25 @@ body {
 .btn-download:focus-visible {
   outline: 2px solid var(--color-primary-mid);
   outline-offset: 2px;
+}
+
+/* Sekundærknapp – samme form, lysere fyll, så den primære calendar-knappen
+ * fortsatt er den åpenbare hovedhandlingen. */
+.btn-download--secondary {
+  background: transparent;
+  color: var(--color-primary);
+}
+
+.btn-download--secondary:hover:not(:disabled) {
+  background: var(--color-card-hover);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-download--secondary:disabled {
+  background: transparent;
+  border-color: var(--color-divider);
+  color: var(--color-text-muted);
 }
 
 /* Main list */
@@ -372,8 +397,13 @@ body {
     align-items: stretch;
   }
 
-  .btn-download {
+  .btn-group {
     margin-left: 0;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn-download {
     width: 100%;
     text-align: center;
   }
