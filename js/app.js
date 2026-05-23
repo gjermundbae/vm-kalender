@@ -208,15 +208,7 @@
   function openPoster() {
     if (state.selectedIds.size === 0) return;
     const selected = window.MATCHES.filter((m) => state.selectedIds.has(m.id));
-    const ok = window.VMPoster.openPoster(selected);
-    if (!ok) {
-      // Popup-blokkering er den vanligste årsaken; gi en hjelpsom beskjed
-      // i stedet for å feile stille.
-      alert(
-        "Vinduet ble blokkert av nettleseren. Tillat popup for denne siden, " +
-        "så åpnes plakaten i en ny fane."
-      );
-    }
+    window.VMPoster.openPoster(selected);
   }
 
   sortButtons.forEach((btn) => {

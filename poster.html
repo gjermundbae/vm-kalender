@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="nb">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Min VM-plakat</title>
+  </head>
+  <body>
+    <script src="js/data.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/poster.js"></script>
+    <script>
+      (function () {
+        const matches = window.VMPoster.loadPosterMatches();
+        if (!matches.length) {
+          window.location.replace(
+            new URL("index.html", window.location.href).href
+          );
+          return;
+        }
+        const baseHref = new URL(".", window.location.href).href;
+        const backHref = new URL("index.html", window.location.href).href;
+        const html = window.VMPoster.buildPosterHtml(matches, {
+          baseHref,
+          backHref,
+        });
+        document.open();
+        document.write(html);
+        document.close();
+      })();
+    </script>
+  </body>
+</html>

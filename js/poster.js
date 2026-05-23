@@ -122,6 +122,27 @@
       .join("");
   }
 
+  const POSTER_STORAGE_KEY = "vm-poster-match-ids";
+
+  function savePosterSelection(matches) {
+    const ids = matches.map((m) => m.id);
+    sessionStorage.setItem(POSTER_STORAGE_KEY, JSON.stringify(ids));
+  }
+
+  /** Henter kamper lagret før navigering til poster.html. */
+  function loadPosterMatches() {
+    try {
+      const raw = sessionStorage.getItem(POSTER_STORAGE_KEY);
+      if (!raw) return [];
+      const ids = new Set(JSON.parse(raw));
+      return window.MATCHES.filter((m) => ids.has(m.id)).sort(
+        (a, b) => new Date(a.datetime) - new Date(b.datetime)
+      );
+    } catch {
+      return [];
+    }
+  }
+
   function buildPosterHtml(matches, opts) {
     const sorted = [...matches].sort(
       (a, b) => new Date(a.datetime) - new Date(b.datetime)
@@ -129,10 +150,12 @@
     const cards = sorted.map(renderMatchCard).join("");
     const matchCount = sorted.length;
     const matchWord = matchCount === 1 ? "kamp" : "kamper";
+    const backHref = escapeHtml((opts && opts.backHref) || "index.html");
+    const topbarBack =
+      `<a class="btn btn--ghost" href="${backHref}">Tilbake til kalenderen</a>`;
 
-    // Vi åpner popupen via window.open("") + document.write, så base-URL
-    // er "about:blank" og relative <script src>-stier funker ikke. Vi sender
-    // derfor inn opener-URL-en og bruker den som <base>.
+    // poster.html skriver HTML inn med document.write; <base> sikrer at
+    // relative script-stier (html-to-image) og fonter løser riktig.
     const baseHref = (opts && opts.baseHref) || "";
     const baseTag = baseHref ? `<base href="${escapeHtml(baseHref)}">` : "";
 
@@ -200,6 +223,12 @@ ${baseTag}
     letter-spacing: 0.01em;
     cursor: pointer;
     transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+  }
+
+  a.btn {
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
   }
 
   .btn--primary {
@@ -624,7 +653,7 @@ ${baseTag}
 <body>
 
 <div class="topbar no-print">
-  <button class="btn btn--ghost" type="button" onclick="window.close()">Lukk</button>
+  ${topbarBack}
   <button class="btn btn--ghost" type="button" id="btn-print" onclick="window.print()">Skriv ut</button>
   <button class="btn btn--primary" type="button" id="btn-png">Last ned som bilde</button>
 </div>
@@ -643,7 +672,7 @@ ${baseTag}
 
   ${
     sorted.length === 0
-      ? `<div class="empty">Du har ikke valgt noen kamper enda. Lukk og velg minst én!</div>`
+      ? `<div class="empty">Gå tilbake og velg minst én kamp!</div>`
       : `<ol class="matches">${cards}</ol>`
   }
 
@@ -726,24 +755,11 @@ ${baseTag}
 </html>`;
   }
 
-  /**
-   * Åpne en selvstendig plakat-side i en ny fane, populer den, og la
-   * brukeren printe eller lagre som PDF derfra. Returnerer true ved
-   * suksess, false hvis nettleseren blokkerte popupen.
-   * @param {Array} matches
-   */
+  /** Lagre valg og gå til plakatsiden — fungerer i vanlig nettleser og in-app. */
   function openPoster(matches) {
-    // Popupen er about:blank, så vi må gi den en eksplisitt base-URL for at
-    // relative <script src> (html-to-image-biblioteket) skal kunne lastes.
-    const baseHref = new URL(".", window.location.href).href;
-    const html = buildPosterHtml(matches, { baseHref });
-    const win = window.open("", "_blank");
-    if (!win) return false;
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
-    return true;
+    savePosterSelection(matches);
+    window.location.href = new URL("poster.html", window.location.href).href;
   }
 
-  window.VMPoster = { openPoster, buildPosterHtml };
+  window.VMPoster = { openPoster, buildPosterHtml, loadPosterMatches };
 })();
