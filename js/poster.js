@@ -542,14 +542,82 @@ ${baseTag}
     }
   }
 
-  /* Mobil-preview */
+  /* Mobil — stablet kort (som kalenderlisten), ikke smal sidekolonne */
   @media (max-width: 600px) {
-    .poster { padding: 2rem 1.1rem 1.75rem; }
-    .poster__footer { margin-top: 2rem; }
-    .match { grid-template-columns: 5.5rem 1fr; padding: 0.8rem 0.9rem; }
-    .match__time { font-size: 1.6rem; }
-    .match__teams { font-size: 1.05rem; }
+    body { padding: 1rem 0.65rem 2.5rem; }
+
+    .topbar {
+      margin-bottom: 1rem;
+      gap: 0.5rem;
+    }
+
+    .topbar .btn {
+      padding: 0.55rem 0.85rem;
+      font-size: 0.82rem;
+    }
+
+    .poster {
+      padding: 1.75rem 1rem 1.5rem;
+      border-radius: 14px;
+    }
+
+    .poster__header { margin-bottom: 1.5rem; }
+    .poster__pre { font-size: 1.15rem; }
     .poster__title { text-shadow: 3px 3px 0 #ffd83d; }
+    .poster__sub {
+      font-size: 0.9rem;
+      padding: 0 0.15rem;
+    }
+
+    .matches { gap: 0.85rem; }
+
+    .match {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+      gap: 0.65rem;
+      padding: 0.85rem 1rem 0.95rem;
+      /* Mindre tilt = mindre horisontalt «søl» på smal skjerm */
+      transform: rotate(calc(var(--tilt, 0deg) * 0.55));
+    }
+
+    .match__when {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.35rem 0.6rem;
+      border-right: none;
+      border-bottom: 2px dashed currentColor;
+      padding-right: 0;
+      padding-bottom: 0.65rem;
+    }
+
+    .match__date {
+      font-size: 0.72rem;
+      width: 100%;
+      margin-bottom: -0.15rem;
+    }
+
+    .match__time {
+      font-size: 1.55rem;
+      margin-top: 0;
+    }
+
+    .match__teams {
+      font-size: 1.08rem;
+      line-height: 1.2;
+    }
+
+    .match__meta { font-size: 0.8rem; }
+
+    .match__sticker {
+      top: 6px;
+      right: 6px;
+      width: 34px;
+      height: 34px;
+      font-size: 16px;
+    }
+
+    .poster__footer { margin-top: 1.75rem; }
   }
 </style>
 </head>
