@@ -142,13 +142,15 @@ body {
 }
 
 .controls-toolbar .sort-toggle,
-.controls-toolbar .select-toggle {
+.controls-toolbar .select-toggle,
+.controls-toolbar .past-toggle {
   padding: 2px;
   border-radius: 5px;
 }
 
 .controls-toolbar .sort-toggle__btn,
-.controls-toolbar .select-toggle__btn {
+.controls-toolbar .select-toggle__btn,
+.controls-toolbar .past-toggle__btn {
   padding: 0.3rem 0.72rem;
   font-size: 0.75rem;
   border-radius: 3px;
@@ -245,6 +247,44 @@ body {
   outline-offset: 1px;
 }
 
+/* Vis / skjul spilte kamper — samme pill-språk som sorteringsvalget */
+.past-toggle {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 6px;
+  background: #eef2ef;
+}
+
+.past-toggle__btn {
+  padding: 0.4rem 0.9rem;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition),
+    box-shadow var(--transition);
+}
+
+.past-toggle__btn:hover:not(.is-active) {
+  color: var(--color-primary);
+}
+
+.past-toggle__btn.is-active {
+  background: var(--color-bg);
+  color: var(--color-primary);
+  box-shadow: 0 1px 3px rgba(18, 26, 36, 0.08);
+}
+
+.past-toggle__btn:focus-visible {
+  outline: 2px solid var(--color-primary-mid);
+  outline-offset: 1px;
+}
+
 .selection-count {
   margin: 0;
   font-size: 0.8125rem;
@@ -335,6 +375,17 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
+}
+
+/* Tom liste — alt er spilt og spilte kamper er skjult. */
+.match-list__empty {
+  margin: 0;
+  padding: 3rem 1.25rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--color-text-muted);
 }
 
 /* Match row — ett kort, dato diskret i tidskolonnen */
@@ -455,6 +506,22 @@ body {
 
 .match-card__team {
   white-space: nowrap;
+}
+
+/* Sluttspillkamper kan ha lange plassholdere — la dem brytes pent. */
+.match-card__teams--ko {
+  flex-wrap: wrap;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* Uavklart lagside (Vinner pulje F, 3. plass …) — dempet og uten versaler. */
+.match-card__team--tbd {
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-muted);
+  white-space: normal;
 }
 
 .match-card__flags {

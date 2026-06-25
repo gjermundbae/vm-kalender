@@ -10,6 +10,7 @@
 
   const state = {
     sortMode: "time",
+    showPast: false,
     selectedIds: new Set(),
   };
 
@@ -21,33 +22,65 @@
   const hintPosterEl = document.getElementById("hint-poster");
   const hintDownloadEl = document.getElementById("hint-download");
   const btnSelectAllEl = document.getElementById("btn-select-all");
+  const btnTogglePastEl = document.getElementById("btn-toggle-past");
   const sortButtons = document.querySelectorAll(".sort-toggle__btn");
 
-  function allMatchesSelected() {
-    return (
-      window.MATCHES.length > 0 &&
-      state.selectedIds.size === window.MATCHES.length
-    );
+  /** En kamp regnes som spilt når den er ferdig (avspark + 2 timer). */
+  function isPast(match) {
+    return new Date(match.datetime).getTime() + MATCH_DURATION_MS < Date.now();
+  }
+
+  function hasPastMatches() {
+    return window.MATCHES.some(isPast);
+  }
+
+  /** Kampene som faktisk vises — spilte skjules med mindre brukeren ber om dem. */
+  function visibleMatches() {
+    return state.showPast
+      ? window.MATCHES
+      : window.MATCHES.filter((mm) => !isPast(mm));
+  }
+
+  function allVisibleSelected() {
+    const visible = visibleMatches();
+    return visible.length > 0 && visible.every((mm) => state.selectedIds.has(mm.id));
   }
 
   function updateSelectAllButton() {
-    const all = allMatchesSelected();
+    const all = allVisibleSelected();
     btnSelectAllEl.textContent = all ? "Fjern alle" : "Velg alle";
     btnSelectAllEl.classList.toggle("is-all-selected", all);
     btnSelectAllEl.setAttribute("aria-pressed", String(all));
     btnSelectAllEl.title = all
-      ? "Fjern markering på alle kamper"
-      : "Marker alle kamper i listen";
+      ? "Fjern markering på alle viste kamper"
+      : "Marker alle viste kamper";
   }
 
   function toggleSelectAll() {
-    if (allMatchesSelected()) {
-      state.selectedIds.clear();
+    const visible = visibleMatches();
+    if (allVisibleSelected()) {
+      for (const mm of visible) state.selectedIds.delete(mm.id);
     } else {
-      for (const m of window.MATCHES) {
-        state.selectedIds.add(m.id);
-      }
+      for (const mm of visible) state.selectedIds.add(mm.id);
     }
+    updateChrome();
+    render();
+  }
+
+  function updateTogglePastButton() {
+    if (!btnTogglePastEl) return;
+    // Knappen er bare relevant når det faktisk finnes spilte kamper å vise.
+    btnTogglePastEl.hidden = !hasPastMatches();
+    btnTogglePastEl.textContent = state.showPast ? "Skjul spilte" : "Vis spilte";
+    btnTogglePastEl.classList.toggle("is-active", state.showPast);
+    btnTogglePastEl.setAttribute("aria-pressed", String(state.showPast));
+    btnTogglePastEl.title = state.showPast
+      ? "Skjul kamper som allerede er spilt"
+      : "Vis kamper som allerede er spilt";
+  }
+
+  function toggleShowPast() {
+    state.showPast = !state.showPast;
     updateChrome();
     render();
   }
@@ -57,6 +90,7 @@
     selectionCountNumEl.textContent = String(n);
     selectionCountEl.hidden = n === 0;
     updateSelectAllButton();
+    updateTogglePastButton();
     btnDownloadEl.disabled = n === 0;
     btnPosterEl.disabled = n === 0;
     syncActionHint(hintPosterEl, btnPosterEl, n === 0);
@@ -87,13 +121,27 @@
   }
 
   function render() {
+    const visible = visibleMatches();
+    if (visible.length === 0) {
+      renderEmptyState();
+      return;
+    }
     window.VMRender.renderList(
       matchListEl,
-      window.MATCHES,
+      visible,
       state.sortMode,
       state.selectedIds,
       toggleSelection
     );
+  }
+
+  /** Når alt er spilt og spilte kamper er skjult. */
+  function renderEmptyState() {
+    const empty = document.createElement("p");
+    empty.className = "match-list__empty";
+    empty.textContent =
+      "Ingen kommende kamper igjen – hele VM er spilt! Trykk «Vis spilte» for å se dem igjen.";
+    matchListEl.replaceChildren(empty);
   }
 
   function setSortMode(mode) {
@@ -223,6 +271,7 @@
   btnDownloadEl.addEventListener("click", downloadIcs);
   btnPosterEl.addEventListener("click", openPoster);
   btnSelectAllEl.addEventListener("click", toggleSelectAll);
+  if (btnTogglePastEl) btnTogglePastEl.addEventListener("click", toggleShowPast);
 
   updateChrome();
   render();

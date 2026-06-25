@@ -57,9 +57,12 @@
   function renderMatchCard(match, index) {
     const palette = paletteForIndex(index);
     const tilt = tiltForIndex(index);
-    const hf = window.VMRender.flagEmoji(match.home.code);
-    const af = window.VMRender.flagEmoji(match.away.code);
+    const hf = match.home.code ? window.VMRender.flagEmoji(match.home.code) : "";
+    const af = match.away.code ? window.VMRender.flagEmoji(match.away.code) : "";
     const longDate = formatLongDate(match);
+    const phaseLabel = match.group
+      ? `Pulje ${escapeHtml(match.group)}`
+      : escapeHtml(match.roundLabel);
 
     return `
       <li class="match-slot">
@@ -72,14 +75,14 @@
         </div>
         <div class="match__main">
           <div class="match__teams">
-            <span class="match__flag" aria-hidden="true">${hf}</span>
+            ${hf ? `<span class="match__flag" aria-hidden="true">${hf}</span>` : ""}
             <span class="match__team">${escapeHtml(match.home.name)}</span>
             <span class="match__vs">vs</span>
             <span class="match__team">${escapeHtml(match.away.name)}</span>
-            <span class="match__flag" aria-hidden="true">${af}</span>
+            ${af ? `<span class="match__flag" aria-hidden="true">${af}</span>` : ""}
           </div>
           <div class="match__meta">
-            <span class="pill pill--group">Pulje ${escapeHtml(match.group)}</span>
+            <span class="pill pill--group">${phaseLabel}</span>
             <span class="match__dot" aria-hidden="true">•</span>
             <span>${escapeHtml(match.venue)}</span>
             <span class="match__dot" aria-hidden="true">•</span>

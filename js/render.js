@@ -77,6 +77,19 @@
     return new Date(a.datetime) - new Date(b.datetime);
   }
 
+  /** Sluttspillrunder sorteres etter puljene (A–L) i gruppe-modus. */
+  const ROUND_RANK = { R32: 1, R16: 2, QF: 3, SF: 4, BRONZE: 5, FINAL: 6 };
+
+  /** Grupperingsnøkkel i gruppe-modus: puljebokstav eller sluttspillrunde. */
+  function phaseKey(match) {
+    return match.group || match.round;
+  }
+
+  /** Puljer (A=65 …) før sluttspillrunder (100+). */
+  function phaseRank(key) {
+    return ROUND_RANK[key] ? 100 + ROUND_RANK[key] : key.charCodeAt(0);
+  }
+
   /**
    * @param {typeof window.MATCHES} matches
    * @param {'group' | 'time'} sortMode
@@ -106,12 +119,13 @@
 
     const byGroup = new Map();
     for (const match of sorted) {
-      if (!byGroup.has(match.group)) byGroup.set(match.group, []);
-      byGroup.get(match.group).push(match);
+      const key = phaseKey(match);
+      if (!byGroup.has(key)) byGroup.set(key, []);
+      byGroup.get(key).push(match);
     }
 
     const flat = [...byGroup.entries()]
-      .sort(([a], [b]) => a.localeCompare(b))
+      .sort(([a], [b]) => phaseRank(a) - phaseRank(b))
       .flatMap(([, groupMatches]) => groupMatches);
 
     return [
@@ -134,12 +148,13 @@
     });
   }
 
-  /** Dato vises på første kamp per dag innen hver pulje. */
+  /** Dato vises på første kamp per dag innen hver pulje/runde. */
   function computeShowDateAtByGroup(matches) {
     const seenByGroup = new Map();
     return matches.map((m) => {
-      if (!seenByGroup.has(m.group)) seenByGroup.set(m.group, new Set());
-      const dates = seenByGroup.get(m.group);
+      const groupKey = phaseKey(m);
+      if (!seenByGroup.has(groupKey)) seenByGroup.set(groupKey, new Set());
+      const dates = seenByGroup.get(groupKey);
       const key = dateKey(m);
       if (dates.has(key)) return false;
       dates.add(key);
@@ -187,22 +202,27 @@
     const infoCol = document.createElement("div");
     infoCol.className = "match-card__info";
     const teamsEl = document.createElement("p");
-    teamsEl.className = "match-card__teams";
+    const hasPlaceholder = match.home.placeholder || match.away.placeholder;
+    teamsEl.className =
+      "match-card__teams" + (hasPlaceholder ? " match-card__teams--ko" : "");
     teamsEl.innerHTML = formatTeams(match);
 
     const metaEl = document.createElement("p");
     metaEl.className = "match-card__meta";
     const groupEl = document.createElement("span");
     groupEl.className = "match-card__group";
-    groupEl.textContent = `Pulje ${match.group}`;
-    const sepEl = document.createElement("span");
-    sepEl.className = "match-card__meta-sep";
-    sepEl.setAttribute("aria-hidden", "true");
-    sepEl.textContent = "·";
+    groupEl.textContent = match.group ? `Pulje ${match.group}` : match.roundLabel;
     const venueEl = document.createElement("span");
     venueEl.className = "match-card__venue";
     venueEl.textContent = match.venue;
-    metaEl.append(groupEl, sepEl, venueEl);
+    metaEl.append(groupEl, metaSep(), venueEl);
+
+    if (match.matchNumber) {
+      const matchNoEl = document.createElement("span");
+      matchNoEl.className = "match-card__matchno";
+      matchNoEl.textContent = `Kamp ${match.matchNumber}`;
+      metaEl.append(metaSep(), matchNoEl);
+    }
 
     infoCol.append(teamsEl, metaEl);
 
@@ -220,17 +240,34 @@
     return row;
   }
 
+  /** Diskret «·»-skille mellom meta-elementene. */
+  function metaSep() {
+    const sep = document.createElement("span");
+    sep.className = "match-card__meta-sep";
+    sep.setAttribute("aria-hidden", "true");
+    sep.textContent = "·";
+    return sep;
+  }
+
+  /** Avklart lag vises i versaler; plassholder (Vinner pulje F …) dempet. */
+  function teamLabel(t) {
+    if (t.placeholder) {
+      return `<span class="match-card__team match-card__team--tbd">${t.name}</span>`;
+    }
+    return `<span class="match-card__team">${t.name.toUpperCase()}</span>`;
+  }
+
   function formatTeams(match) {
-    const h = match.home.name.toUpperCase();
-    const a = match.away.name.toUpperCase();
-    const hf = flagEmoji(match.home.code);
-    const af = flagEmoji(match.away.code);
+    const hf = match.home.code ? flagEmoji(match.home.code) : "";
+    const af = match.away.code ? flagEmoji(match.away.code) : "";
     return (
-      `<span class="match-card__team">${h}</span>` +
-      `<span class="match-card__flags"><span class="match-card__flag">${hf}</span>` +
+      teamLabel(match.home) +
+      `<span class="match-card__flags">` +
+      (hf ? `<span class="match-card__flag">${hf}</span>` : "") +
       `<span class="match-card__sep">–</span>` +
-      `<span class="match-card__flag">${af}</span></span>` +
-      `<span class="match-card__team">${a}</span>`
+      (af ? `<span class="match-card__flag">${af}</span>` : "") +
+      `</span>` +
+      teamLabel(match.away)
     );
   }
 
@@ -259,11 +296,10 @@
       let prevGroup = null;
       section.matches.forEach((match, i) => {
         const showDate = section.showDateAt[i];
+        const key = phaseKey(match);
         const groupStart =
-          sortMode === "group" &&
-          prevGroup !== null &&
-          prevGroup !== match.group;
-        prevGroup = match.group;
+          sortMode === "group" && prevGroup !== null && prevGroup !== key;
+        prevGroup = key;
         list.appendChild(
           createMatchRow(
             match,

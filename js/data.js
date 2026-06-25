@@ -6,6 +6,7 @@
   "use strict";
 
   const NB_MONTH = "juni";
+  const NB_MONTHS = { 6: "juni", 7: "juli" };
 
   /**
    * @param {string} group
@@ -29,6 +30,48 @@
       broadcaster,
       home: { name: home[0], code: home[1] },
       away: { name: away[0], code: away[1] },
+      venue,
+    };
+  }
+
+  /**
+   * En lagside i sluttspillet. Enten et avklart lag (med flagg) eller en
+   * plassholder som «Vinner pulje F» / «3. plass (C/E/F/H/I)».
+   * @param {[string, string] | string} spec [navn, alpha-3] eller plassholdertekst
+   */
+  function team(spec) {
+    if (Array.isArray(spec)) return { name: spec[0], code: spec[1] };
+    return { name: spec, placeholder: true };
+  }
+
+  /**
+   * @param {number} num offisielt kampnummer (73–104)
+   * @param {string} round "R32" | "R16" | "QF" | "SF" | "BRONZE" | "FINAL"
+   * @param {string} roundLabel norsk visningsnavn for runden
+   * @param {number} month 6 (juni) eller 7 (juli)
+   * @param {number} day dag i måneden
+   * @param {string} time "HH:MM" norsk tid (CEST, UTC+02:00)
+   * @param {string} broadcaster "NRK" | "TV 2" | "TBD"
+   * @param {[string, string] | string} home avklart lag eller plassholder
+   * @param {[string, string] | string} away avklart lag eller plassholder
+   * @param {string} venue
+   */
+  function ko(num, round, roundLabel, month, day, time, broadcaster, home, away, venue) {
+    const mm = String(month).padStart(2, "0");
+    const dd = String(day).padStart(2, "0");
+    return {
+      id: `ko-${num}`,
+      group: null,
+      stage: "sluttspill",
+      round,
+      roundLabel,
+      matchNumber: num,
+      datetime: `2026-${mm}-${dd}T${time}:00+02:00`,
+      dateLabel: `${day}. ${NB_MONTHS[month]}`,
+      timeLabel: time,
+      broadcaster,
+      home: team(home),
+      away: team(away),
       venue,
     };
   }
@@ -129,5 +172,55 @@
     m("L", 4, 24, "01:00", "NRK",  ["Panama", "PAN"], ["Kroatia", "HRV"], "Toronto"),
     m("L", 5, 27, "23:00", "TV 2", ["Panama", "PAN"], ["England", "ENG"], "New York"),
     m("L", 6, 27, "23:00", "TV 2", ["Kroatia", "HRV"], ["Ghana", "GHA"], "Philadelphia"),
+
+    // ── Sluttspill ──────────────────────────────────────────────────────
+    // Datoer, tider (omregnet til norsk tid) og arenaer fra FIFAs offisielle
+    // sluttspillprogram. Avklarte lag fylles inn etter hvert som puljene
+    // sikres; resten står som plassholdere. Kanal er kun bekreftet for
+    // semifinaler (TV 2), bronsefinale og finale (NRK) — ellers «TBD».
+
+    // 16-delsfinaler (Round of 32) — 28. juni–4. juli
+    ko(73, "R32", "16-delsfinale", 6, 28, "21:00", "TBD", ["Sør-Afrika", "ZAF"], ["Canada", "CAN"], "Los Angeles"),
+    ko(74, "R32", "16-delsfinale", 6, 29, "22:30", "TBD", ["Tyskland", "DEU"], "3. plass (A/B/C/D/F)", "Boston"),
+    ko(76, "R32", "16-delsfinale", 6, 29, "19:00", "TBD", ["Brasil", "BRA"], "2'er pulje F", "Houston"),
+    ko(75, "R32", "16-delsfinale", 6, 30, "03:00", "TBD", "Vinner pulje F", ["Marokko", "MAR"], "Monterrey"),
+    ko(78, "R32", "16-delsfinale", 6, 30, "19:00", "TBD", "2'er pulje E", "2'er pulje I", "Dallas"),
+    ko(77, "R32", "16-delsfinale", 6, 30, "23:00", "TBD", "Vinner pulje I", "3. plass (C/D/F/G/H)", "New York"),
+    ko(79, "R32", "16-delsfinale", 7, 1, "03:00", "TBD", ["Mexico", "MEX"], "3. plass (C/E/F/H/I)", "Mexico City"),
+    ko(80, "R32", "16-delsfinale", 7, 1, "18:00", "TBD", "Vinner pulje L", "3. plass (E/H/I/J/K)", "Atlanta"),
+    ko(82, "R32", "16-delsfinale", 7, 1, "22:00", "TBD", "Vinner pulje G", "3. plass (A/H/I/J)", "Seattle"),
+    ko(81, "R32", "16-delsfinale", 7, 2, "02:00", "TBD", ["USA", "USA"], "3. plass (B/E/F/I/J)", "San Francisco"),
+    ko(84, "R32", "16-delsfinale", 7, 2, "21:00", "TBD", "Vinner pulje H", "2'er pulje J", "Los Angeles"),
+    ko(83, "R32", "16-delsfinale", 7, 3, "01:00", "TBD", "2'er pulje K", "2'er pulje L", "Toronto"),
+    ko(85, "R32", "16-delsfinale", 7, 3, "05:00", "TBD", ["Sveits", "CHE"], "3. plass (E/F/G/I/J)", "Vancouver"),
+    ko(88, "R32", "16-delsfinale", 7, 3, "20:00", "TBD", "2'er pulje D", "2'er pulje G", "Dallas"),
+    ko(86, "R32", "16-delsfinale", 7, 4, "00:00", "TBD", ["Argentina", "ARG"], "2'er pulje H", "Miami"),
+    ko(87, "R32", "16-delsfinale", 7, 4, "03:30", "TBD", "Vinner pulje K", "3. plass (D/E/I/J/L)", "Kansas City"),
+
+    // 8-delsfinaler (Round of 16) — 4.–7. juli
+    ko(90, "R16", "8-delsfinale", 7, 4, "19:00", "TBD", "Vinner kamp 73", "Vinner kamp 75", "Houston"),
+    ko(89, "R16", "8-delsfinale", 7, 4, "23:00", "TBD", "Vinner kamp 74", "Vinner kamp 77", "Philadelphia"),
+    ko(91, "R16", "8-delsfinale", 7, 5, "22:00", "TBD", "Vinner kamp 76", "Vinner kamp 78", "New York"),
+    ko(92, "R16", "8-delsfinale", 7, 6, "02:00", "TBD", "Vinner kamp 79", "Vinner kamp 80", "Mexico City"),
+    ko(93, "R16", "8-delsfinale", 7, 6, "21:00", "TBD", "Vinner kamp 83", "Vinner kamp 84", "Dallas"),
+    ko(94, "R16", "8-delsfinale", 7, 7, "02:00", "TBD", "Vinner kamp 81", "Vinner kamp 82", "Seattle"),
+    ko(95, "R16", "8-delsfinale", 7, 7, "18:00", "TBD", "Vinner kamp 86", "Vinner kamp 88", "Atlanta"),
+    ko(96, "R16", "8-delsfinale", 7, 7, "22:00", "TBD", "Vinner kamp 85", "Vinner kamp 87", "Vancouver"),
+
+    // Kvartfinaler — 9.–12. juli
+    ko(97, "QF", "Kvartfinale", 7, 9, "22:00", "TBD", "Vinner kamp 89", "Vinner kamp 90", "Boston"),
+    ko(98, "QF", "Kvartfinale", 7, 10, "21:00", "TBD", "Vinner kamp 93", "Vinner kamp 94", "Los Angeles"),
+    ko(99, "QF", "Kvartfinale", 7, 11, "23:00", "TBD", "Vinner kamp 91", "Vinner kamp 92", "Miami"),
+    ko(100, "QF", "Kvartfinale", 7, 12, "03:00", "TBD", "Vinner kamp 95", "Vinner kamp 96", "Kansas City"),
+
+    // Semifinaler — 14.–15. juli
+    ko(101, "SF", "Semifinale", 7, 14, "21:00", "TV 2", "Vinner kamp 97", "Vinner kamp 98", "Dallas"),
+    ko(102, "SF", "Semifinale", 7, 15, "21:00", "TV 2", "Vinner kamp 99", "Vinner kamp 100", "Atlanta"),
+
+    // Bronsefinale — 18. juli
+    ko(103, "BRONZE", "Bronsefinale", 7, 18, "23:00", "NRK", "Taper kamp 101", "Taper kamp 102", "Miami"),
+
+    // Finale — 19. juli
+    ko(104, "FINAL", "Finale", 7, 19, "21:00", "NRK", "Vinner kamp 101", "Vinner kamp 102", "New York"),
   ];
 })();
