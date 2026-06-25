@@ -278,10 +278,43 @@
    * @param {Set<string>} selectedIds
    * @param {(id: string) => void} onToggle
    */
+  const STAGE_LABELS = { gruppespill: "Gruppespill", sluttspill: "Sluttspill" };
+
+  function isKnockout(match) {
+    return match.stage === "sluttspill";
+  }
+
   function renderList(container, matches, sortMode, selectedIds, onToggle) {
     container.replaceChildren();
-    const sections = buildSections(matches, sortMode);
 
+    // Del listen i gruppespill og sluttspill så de to fasene blir tydelig
+    // adskilt. Faseoverskriften vises bare når begge faser faktisk er synlige
+    // — ellers ville den bare være støy.
+    const groupStage = matches.filter((mm) => !isKnockout(mm));
+    const knockout = matches.filter(isKnockout);
+    const blocks = [];
+    if (groupStage.length) blocks.push(["gruppespill", groupStage]);
+    if (knockout.length) blocks.push(["sluttspill", knockout]);
+    const showStageHeadings = blocks.length > 1;
+
+    for (const [stage, stageMatches] of blocks) {
+      if (showStageHeadings) {
+        const stageHeading = document.createElement("h2");
+        stageHeading.className = "stage-heading";
+        stageHeading.textContent = STAGE_LABELS[stage];
+        container.appendChild(stageHeading);
+      }
+      appendSections(
+        container,
+        buildSections(stageMatches, sortMode),
+        sortMode,
+        selectedIds,
+        onToggle
+      );
+    }
+  }
+
+  function appendSections(container, sections, sortMode, selectedIds, onToggle) {
     for (const section of sections) {
       if (section.heading) {
         const heading = document.createElement("h2");

@@ -371,6 +371,37 @@ body {
   margin-top: 0;
 }
 
+/* Fase-skille — løfter gruppespill/sluttspill ett hakk over dato-/pulje-
+   overskriftene: kraftigere, i primærfargen, med en tynn linje som strekker
+   seg utover etiketten. */
+.stage-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2.5rem 0 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.stage-heading::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--color-divider);
+}
+
+.stage-heading:first-child {
+  margin-top: 0;
+}
+
+.stage-heading + .section-heading {
+  margin-top: 0.75rem;
+}
+
 .section-matches {
   display: flex;
   flex-direction: column;
