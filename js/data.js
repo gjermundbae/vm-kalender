@@ -184,7 +184,7 @@
     ko(74, "R32", "16-delsfinale", 6, 29, "22:30", "TBD", ["Tyskland", "DEU"], "3. plass (A/B/C/D/F)", "Boston"),
     ko(76, "R32", "16-delsfinale", 6, 29, "19:00", "TBD", ["Brasil", "BRA"], ["Japan", "JPN"], "Houston"),
     ko(75, "R32", "16-delsfinale", 6, 30, "03:00", "TBD", ["Nederland", "NLD"], ["Marokko", "MAR"], "Monterrey"),
-    ko(78, "R32", "16-delsfinale", 6, 30, "19:00", "TBD", "2'er pulje E", "2'er pulje I", "Dallas"),
+    ko(78, "R32", "16-delsfinale", 6, 30, "19:00", "TBD", ["Elfenbenskysten", "CIV"], "2'er pulje I", "Dallas"),
     ko(77, "R32", "16-delsfinale", 6, 30, "23:00", "TBD", "Vinner pulje I", "3. plass (C/D/F/G/H)", "New York"),
     ko(79, "R32", "16-delsfinale", 7, 1, "03:00", "TBD", ["Mexico", "MEX"], "3. plass (C/E/F/H/I)", "Mexico City"),
     ko(80, "R32", "16-delsfinale", 7, 1, "18:00", "TBD", "Vinner pulje L", "3. plass (E/H/I/J/K)", "Atlanta"),

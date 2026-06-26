@@ -11,10 +11,17 @@
   const state = {
     sortMode: "time",
     showPast: false,
+    view: "list",
     selectedIds: new Set(),
   };
 
+  const VIEW_STORAGE_KEY = "vm-active-view";
+
   const matchListEl = document.getElementById("match-list");
+  const bracketViewEl = document.getElementById("bracket-view");
+  const bracketHostEl = document.getElementById("bracket-host");
+  const listControlsEl = document.querySelector(".list-controls");
+  const viewButtons = document.querySelectorAll(".view-toggle [data-view]");
   const selectionCountEl = document.getElementById("selection-count");
   const selectionCountNumEl = document.getElementById("selection-count-num");
   const btnDownloadEl = document.getElementById("btn-download");
@@ -23,7 +30,9 @@
   const hintDownloadEl = document.getElementById("hint-download");
   const btnSelectAllEl = document.getElementById("btn-select-all");
   const btnTogglePastEl = document.getElementById("btn-toggle-past");
-  const sortButtons = document.querySelectorAll(".sort-toggle__btn");
+  // Bare tid/gruppe-knappene (data-sort). Liste/Tre-toggelen deler .sort-toggle__btn
+  // for stilens skyld, men styres separat via [data-view].
+  const sortButtons = document.querySelectorAll("[data-sort]");
 
   /** En kamp regnes som spilt når den er ferdig (avspark + 2 timer). */
   function isPast(match) {
@@ -121,6 +130,16 @@
   }
 
   function render() {
+    if (state.view === "bracket") {
+      window.VMBracket.renderBracket(
+        bracketHostEl,
+        window.MATCHES,
+        state.selectedIds,
+        toggleSelection
+      );
+      return;
+    }
+
     const visible = visibleMatches();
     if (visible.length === 0) {
       renderEmptyState();
@@ -133,6 +152,29 @@
       state.selectedIds,
       toggleSelection
     );
+  }
+
+  /** Bytt mellom liste og sluttspilltre. Treet viser hele utslagsrunden og deler
+   *  utvalget med listen; liste-spesifikke kontroller (tid/gruppe, vis spilte)
+   *  vises bare i liste-visning. Aktiv visning huskes for økten, så en
+   *  runde innom plakaten tar deg tilbake dit du var. */
+  function setView(view) {
+    state.view = view;
+    const bracket = view === "bracket";
+    matchListEl.hidden = bracket;
+    bracketViewEl.hidden = !bracket;
+    if (listControlsEl) listControlsEl.hidden = bracket;
+    viewButtons.forEach((btn) => {
+      const active = btn.dataset.view === view;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-pressed", String(active));
+    });
+    try {
+      sessionStorage.setItem(VIEW_STORAGE_KEY, view);
+    } catch {
+      /* sessionStorage utilgjengelig (privat modus e.l.) — visning huskes ikke. */
+    }
+    render();
   }
 
   /** Når alt er spilt og spilte kamper er skjult. */
@@ -272,7 +314,23 @@
   btnPosterEl.addEventListener("click", openPoster);
   btnSelectAllEl.addEventListener("click", toggleSelectAll);
   if (btnTogglePastEl) btnTogglePastEl.addEventListener("click", toggleShowPast);
+  viewButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (btn.dataset.view !== state.view) setView(btn.dataset.view);
+    });
+  });
+
+  /** Gjenopprett visningen fra forrige steg i økten (f.eks. tilbake fra plakat). */
+  function restoreView() {
+    let saved = null;
+    try {
+      saved = sessionStorage.getItem(VIEW_STORAGE_KEY);
+    } catch {
+      /* ignorer */
+    }
+    return saved === "bracket" ? "bracket" : "list";
+  }
 
   updateChrome();
-  render();
+  setView(restoreView());
 })();

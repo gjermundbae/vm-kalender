@@ -352,5 +352,7 @@
     buildSections,
     renderList,
     flagEmoji,
+    formatTeams,
+    teamLabel,
   };
 })();
