@@ -182,8 +182,8 @@
     // 16-delsfinaler (Round of 32) — 28. juni–4. juli
     ko(73, "R32", "16-delsfinale", 6, 28, "21:00", "TBD", ["Sør-Afrika", "ZAF"], ["Canada", "CAN"], "Los Angeles"),
     ko(74, "R32", "16-delsfinale", 6, 29, "22:30", "TBD", ["Tyskland", "DEU"], "3. plass (A/B/C/D/F)", "Boston"),
-    ko(76, "R32", "16-delsfinale", 6, 29, "19:00", "TBD", ["Brasil", "BRA"], "2'er pulje F", "Houston"),
-    ko(75, "R32", "16-delsfinale", 6, 30, "03:00", "TBD", "Vinner pulje F", ["Marokko", "MAR"], "Monterrey"),
+    ko(76, "R32", "16-delsfinale", 6, 29, "19:00", "TBD", ["Brasil", "BRA"], ["Japan", "JPN"], "Houston"),
+    ko(75, "R32", "16-delsfinale", 6, 30, "03:00", "TBD", ["Nederland", "NLD"], ["Marokko", "MAR"], "Monterrey"),
     ko(78, "R32", "16-delsfinale", 6, 30, "19:00", "TBD", "2'er pulje E", "2'er pulje I", "Dallas"),
     ko(77, "R32", "16-delsfinale", 6, 30, "23:00", "TBD", "Vinner pulje I", "3. plass (C/D/F/G/H)", "New York"),
     ko(79, "R32", "16-delsfinale", 7, 1, "03:00", "TBD", ["Mexico", "MEX"], "3. plass (C/E/F/H/I)", "Mexico City"),
@@ -193,7 +193,7 @@
     ko(84, "R32", "16-delsfinale", 7, 2, "21:00", "TBD", "Vinner pulje H", "2'er pulje J", "Los Angeles"),
     ko(83, "R32", "16-delsfinale", 7, 3, "01:00", "TBD", "2'er pulje K", "2'er pulje L", "Toronto"),
     ko(85, "R32", "16-delsfinale", 7, 3, "05:00", "TBD", ["Sveits", "CHE"], "3. plass (E/F/G/I/J)", "Vancouver"),
-    ko(88, "R32", "16-delsfinale", 7, 3, "20:00", "TBD", "2'er pulje D", "2'er pulje G", "Dallas"),
+    ko(88, "R32", "16-delsfinale", 7, 3, "20:00", "TBD", ["Australia", "AUS"], "2'er pulje G", "Dallas"),
     ko(86, "R32", "16-delsfinale", 7, 4, "00:00", "TBD", ["Argentina", "ARG"], "2'er pulje H", "Miami"),
     ko(87, "R32", "16-delsfinale", 7, 4, "03:30", "TBD", "Vinner pulje K", "3. plass (D/E/I/J/L)", "Kansas City"),
 
