@@ -37,10 +37,19 @@
   /**
    * En lagside i sluttspillet. Enten et avklart lag (med flagg) eller en
    * plassholder som «Vinner pulje F» / «3. plass (C/E/F/H/I)».
-   * @param {[string, string] | string} spec [navn, alpha-3] eller plassholdertekst
+   *
+   * Et avklart lag som har gått videre fra en tidligere sluttspillkamp tar et
+   * tredje element — kampnummeret det avanserte fra (f.eks. ["Brasil","BRA",76]).
+   * Da vises laget med flagg, men `from` beholder mater-koblingen så bracket-treet
+   * fortsatt finner kampen det kom fra.
+   * @param {[string, string] | [string, string, number] | string} spec
    */
   function team(spec) {
-    if (Array.isArray(spec)) return { name: spec[0], code: spec[1] };
+    if (Array.isArray(spec)) {
+      const t = { name: spec[0], code: spec[1] };
+      if (spec.length > 2) t.from = spec[2];
+      return t;
+    }
     return { name: spec, placeholder: true };
   }
 
@@ -181,26 +190,26 @@
 
     // 16-delsfinaler (Round of 32) — 28. juni–4. juli
     ko(73, "R32", "16-delsfinale", 6, 28, "21:00", "TBD", ["Sør-Afrika", "ZAF"], ["Canada", "CAN"], "Los Angeles"),
-    ko(74, "R32", "16-delsfinale", 6, 29, "22:30", "TBD", ["Tyskland", "DEU"], "3. plass (A/B/C/D/F)", "Boston"),
+    ko(74, "R32", "16-delsfinale", 6, 29, "22:30", "TBD", ["Tyskland", "DEU"], ["Paraguay", "PRY"], "Boston"),
     ko(76, "R32", "16-delsfinale", 6, 29, "19:00", "TBD", ["Brasil", "BRA"], ["Japan", "JPN"], "Houston"),
     ko(75, "R32", "16-delsfinale", 6, 30, "03:00", "TBD", ["Nederland", "NLD"], ["Marokko", "MAR"], "Monterrey"),
-    ko(78, "R32", "16-delsfinale", 6, 30, "19:00", "TBD", ["Elfenbenskysten", "CIV"], "2'er pulje I", "Dallas"),
-    ko(77, "R32", "16-delsfinale", 6, 30, "23:00", "TBD", "Vinner pulje I", "3. plass (C/D/F/G/H)", "New York"),
-    ko(79, "R32", "16-delsfinale", 7, 1, "03:00", "TBD", ["Mexico", "MEX"], "3. plass (C/E/F/H/I)", "Mexico City"),
-    ko(80, "R32", "16-delsfinale", 7, 1, "18:00", "TBD", "Vinner pulje L", "3. plass (E/H/I/J/K)", "Atlanta"),
-    ko(82, "R32", "16-delsfinale", 7, 1, "22:00", "TBD", "Vinner pulje G", "3. plass (A/H/I/J)", "Seattle"),
-    ko(81, "R32", "16-delsfinale", 7, 2, "02:00", "TBD", ["USA", "USA"], "3. plass (B/E/F/I/J)", "San Francisco"),
-    ko(84, "R32", "16-delsfinale", 7, 2, "21:00", "TBD", "Vinner pulje H", "2'er pulje J", "Los Angeles"),
-    ko(83, "R32", "16-delsfinale", 7, 3, "01:00", "TBD", "2'er pulje K", "2'er pulje L", "Toronto"),
-    ko(85, "R32", "16-delsfinale", 7, 3, "05:00", "TBD", ["Sveits", "CHE"], "3. plass (E/F/G/I/J)", "Vancouver"),
-    ko(88, "R32", "16-delsfinale", 7, 3, "20:00", "TBD", ["Australia", "AUS"], "2'er pulje G", "Dallas"),
-    ko(86, "R32", "16-delsfinale", 7, 4, "00:00", "TBD", ["Argentina", "ARG"], "2'er pulje H", "Miami"),
-    ko(87, "R32", "16-delsfinale", 7, 4, "03:30", "TBD", "Vinner pulje K", "3. plass (D/E/I/J/L)", "Kansas City"),
+    ko(78, "R32", "16-delsfinale", 6, 30, "19:00", "TBD", ["Elfenbenskysten", "CIV"], ["Norge", "NOR"], "Dallas"),
+    ko(77, "R32", "16-delsfinale", 6, 30, "23:00", "TBD", ["Frankrike", "FRA"], ["Sverige", "SWE"], "New York"),
+    ko(79, "R32", "16-delsfinale", 7, 1, "03:00", "TBD", ["Mexico", "MEX"], ["Ecuador", "ECU"], "Mexico City"),
+    ko(80, "R32", "16-delsfinale", 7, 1, "18:00", "TBD", ["England", "ENG"], ["DR Kongo", "COD"], "Atlanta"),
+    ko(82, "R32", "16-delsfinale", 7, 1, "22:00", "TBD", ["Belgia", "BEL"], ["Senegal", "SEN"], "Seattle"),
+    ko(81, "R32", "16-delsfinale", 7, 2, "02:00", "TBD", ["USA", "USA"], ["Bosnia og Herzegovina", "BIH"], "San Francisco"),
+    ko(84, "R32", "16-delsfinale", 7, 2, "21:00", "TBD", ["Spania", "ESP"], ["Østerrike", "AUT"], "Los Angeles"),
+    ko(83, "R32", "16-delsfinale", 7, 3, "01:00", "TBD", ["Portugal", "PRT"], ["Kroatia", "HRV"], "Toronto"),
+    ko(85, "R32", "16-delsfinale", 7, 3, "05:00", "TBD", ["Sveits", "CHE"], ["Algerie", "DZA"], "Vancouver"),
+    ko(88, "R32", "16-delsfinale", 7, 3, "20:00", "TBD", ["Australia", "AUS"], ["Egypt", "EGY"], "Dallas"),
+    ko(86, "R32", "16-delsfinale", 7, 4, "00:00", "TBD", ["Argentina", "ARG"], ["Kapp Verde", "CPV"], "Miami"),
+    ko(87, "R32", "16-delsfinale", 7, 4, "03:30", "TBD", ["Colombia", "COL"], ["Ghana", "GHA"], "Kansas City"),
 
     // 8-delsfinaler (Round of 16) — 4.–7. juli
-    ko(90, "R16", "8-delsfinale", 7, 4, "19:00", "TBD", "Vinner kamp 73", "Vinner kamp 75", "Houston"),
-    ko(89, "R16", "8-delsfinale", 7, 4, "23:00", "TBD", "Vinner kamp 74", "Vinner kamp 77", "Philadelphia"),
-    ko(91, "R16", "8-delsfinale", 7, 5, "22:00", "TBD", "Vinner kamp 76", "Vinner kamp 78", "New York"),
+    ko(90, "R16", "8-delsfinale", 7, 4, "19:00", "TBD", "Vinner kamp 73", ["Marokko", "MAR", 75], "Houston"),
+    ko(89, "R16", "8-delsfinale", 7, 4, "23:00", "TBD", ["Paraguay", "PRY", 74], "Vinner kamp 77", "Philadelphia"),
+    ko(91, "R16", "8-delsfinale", 7, 5, "22:00", "TBD", ["Brasil", "BRA", 76], "Vinner kamp 78", "New York"),
     ko(92, "R16", "8-delsfinale", 7, 6, "02:00", "TBD", "Vinner kamp 79", "Vinner kamp 80", "Mexico City"),
     ko(93, "R16", "8-delsfinale", 7, 6, "21:00", "TBD", "Vinner kamp 83", "Vinner kamp 84", "Dallas"),
     ko(94, "R16", "8-delsfinale", 7, 7, "02:00", "TBD", "Vinner kamp 81", "Vinner kamp 82", "Seattle"),

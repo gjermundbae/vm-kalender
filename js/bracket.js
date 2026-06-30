@@ -18,8 +18,8 @@
   /** Kort rundenavn i treet — nummereres per runde (32-dels 1, Kvartfinale 1 …)
    *  i stedet for det globale kampnummeret. Finale/bronse er enkeltkamper. */
   const ROUND_LABEL = {
-    R32: "32-dels",
-    R16: "16-dels",
+    R32: "16-dels",
+    R16: "8-dels",
     QF: "Kvartfinale",
     SF: "Semifinale",
     FINAL: "Finale",
@@ -70,9 +70,12 @@
     return (side === "left" ? left : right)[round];
   }
 
-  /** Materkampnummeret en plassholderside peker på («… kamp 73» → 73). */
+  /** Materkampnummeret en side peker på. Enten via en plassholder («… kamp 73»
+   *  → 73) eller via `from` på et avklart lag som har avansert fra den kampen. */
   function feederNumber(side) {
-    if (!side || !side.placeholder) return null;
+    if (!side) return null;
+    if (side.from) return side.from;
+    if (!side.placeholder) return null;
     const hit = /kamp\s+(\d+)/i.exec(side.name || "");
     return hit ? Number(hit[1]) : null;
   }
