@@ -207,9 +207,9 @@
     ko(87, "R32", "16-delsfinale", 7, 4, "03:30", "TBD", ["Colombia", "COL"], ["Ghana", "GHA"], "Kansas City"),
 
     // 8-delsfinaler (Round of 16) — 4.–7. juli
-    ko(90, "R16", "8-delsfinale", 7, 4, "19:00", "TBD", "Vinner kamp 73", ["Marokko", "MAR", 75], "Houston"),
-    ko(89, "R16", "8-delsfinale", 7, 4, "23:00", "TBD", ["Paraguay", "PRY", 74], "Vinner kamp 77", "Philadelphia"),
-    ko(91, "R16", "8-delsfinale", 7, 5, "22:00", "TBD", ["Brasil", "BRA", 76], "Vinner kamp 78", "New York"),
+    ko(90, "R16", "8-delsfinale", 7, 4, "19:00", "TBD", ["Canada", "CAN", 73], ["Marokko", "MAR", 75], "Houston"),
+    ko(89, "R16", "8-delsfinale", 7, 4, "23:00", "TBD", ["Paraguay", "PRY", 74], ["Frankrike", "FRA", 77], "Philadelphia"),
+    ko(91, "R16", "8-delsfinale", 7, 5, "22:00", "TBD", ["Brasil", "BRA", 76], ["Norge", "NOR", 78], "New York"),
     ko(92, "R16", "8-delsfinale", 7, 6, "02:00", "TBD", "Vinner kamp 79", "Vinner kamp 80", "Mexico City"),
     ko(93, "R16", "8-delsfinale", 7, 6, "21:00", "TBD", "Vinner kamp 83", "Vinner kamp 84", "Dallas"),
     ko(94, "R16", "8-delsfinale", 7, 7, "02:00", "TBD", "Vinner kamp 81", "Vinner kamp 82", "Seattle"),
