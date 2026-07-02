@@ -649,7 +649,7 @@ body {
    deterministisk mellom sine matere — og at albue-konnektorene kan tegnes som
    eksakte rad-multipler uten JS-måling. */
 .bracket {
-  --bracket-row: 2.3rem;     /* basis-radhøyde; R32 spenner 2, R16 4, QF 8, SF 16 */
+  --bracket-row: 2.85rem;    /* basis-radhøyde; R32 spenner 2, R16 4, QF 8, SF 16 */
   --bracket-col: 8.25rem;    /* kolonnebredde for tre-cellene (stramt i bredde) */
   --bracket-col-final: 9.5rem;
   --bracket-gap: 0.95rem;    /* kolonne-gap = horisontal albuelengde (stramt) */
@@ -766,10 +766,22 @@ body {
 
 .bracket-match__meta {
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
   font-size: 0.625rem;
   font-weight: 500;
   letter-spacing: 0.02em;
+  line-height: 1.25;
   color: var(--color-text-muted);
+  min-width: 0;
+}
+
+.bracket-match__city,
+.bracket-match__when {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Midtkolonne: finale (framhevet) + bronse (underordnet), vertikalt sentrert. */

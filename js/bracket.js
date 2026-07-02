@@ -149,7 +149,7 @@
     );
   }
 
-  function fillCell(btn, match, label, labels, selectedIds, onToggle) {
+  function fillCell(btn, match, labels, selectedIds, onToggle) {
     const selected = selectedIds.has(match.id);
     btn.type = "button";
     btn.dataset.matchId = match.id;
@@ -160,9 +160,16 @@
     teams.className = "bracket-match__teams";
     teams.innerHTML = teamLine(match.home, labels) + teamLine(match.away, labels);
 
+    // To linjer: spillby øverst, dato + Oslo-tid (kl.) under.
     const meta = document.createElement("p");
     meta.className = "bracket-match__meta";
-    meta.textContent = label + " · " + match.dateLabel;
+    const city = document.createElement("span");
+    city.className = "bracket-match__city";
+    city.textContent = match.venue;
+    const when = document.createElement("span");
+    when.className = "bracket-match__when";
+    when.textContent = match.dateLabel + " kl. " + match.timeLabel;
+    meta.append(city, when);
 
     btn.replaceChildren(teams, meta);
     btn.addEventListener("click", () => onToggle(match.id));
@@ -177,7 +184,7 @@
     btn.style.gridColumn = String(cell.col);
     btn.style.gridRow = cell.rowStart + 1 + " / span " + cell.rowSpan;
     if (cell.connRows) btn.style.setProperty("--conn-rows", String(cell.connRows));
-    fillCell(btn, cell.match, labels.get(cell.match.matchNumber), labels, selectedIds, onToggle);
+    fillCell(btn, cell.match, labels, selectedIds, onToggle);
     return btn;
   }
 
@@ -189,8 +196,7 @@
     label.className = "bracket-match__round";
     label.textContent = match.roundLabel;
 
-    // Finale/bronse er enkeltkamper utenfor cellene → bruk rundenavnet direkte.
-    fillCell(btn, match, labels.get(match.matchNumber) || match.roundLabel, labels, selectedIds, onToggle);
+    fillCell(btn, match, labels, selectedIds, onToggle);
     btn.prepend(label);
     return btn;
   }
