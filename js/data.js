@@ -210,9 +210,9 @@
     ko(90, "R16", "8-delsfinale", 7, 4, "19:00", "TBD", ["Canada", "CAN", 73], ["Marokko", "MAR", 75], "Houston"),
     ko(89, "R16", "8-delsfinale", 7, 4, "23:00", "TBD", ["Paraguay", "PRY", 74], ["Frankrike", "FRA", 77], "Philadelphia"),
     ko(91, "R16", "8-delsfinale", 7, 5, "22:00", "TBD", ["Brasil", "BRA", 76], ["Norge", "NOR", 78], "New York"),
-    ko(92, "R16", "8-delsfinale", 7, 6, "02:00", "TBD", "Vinner kamp 79", "Vinner kamp 80", "Mexico City"),
+    ko(92, "R16", "8-delsfinale", 7, 6, "02:00", "TBD", "Vinner kamp 79", ["England", "ENG", 80], "Mexico City"),
     ko(93, "R16", "8-delsfinale", 7, 6, "21:00", "TBD", "Vinner kamp 83", "Vinner kamp 84", "Dallas"),
-    ko(94, "R16", "8-delsfinale", 7, 7, "02:00", "TBD", "Vinner kamp 81", "Vinner kamp 82", "Seattle"),
+    ko(94, "R16", "8-delsfinale", 7, 7, "02:00", "TBD", ["USA", "USA", 81], ["Belgia", "BEL", 82], "Seattle"),
     ko(95, "R16", "8-delsfinale", 7, 7, "18:00", "TBD", "Vinner kamp 86", "Vinner kamp 88", "Atlanta"),
     ko(96, "R16", "8-delsfinale", 7, 7, "22:00", "TBD", "Vinner kamp 85", "Vinner kamp 87", "Vancouver"),
 
