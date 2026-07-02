@@ -328,7 +328,7 @@
     } catch {
       /* ignorer */
     }
-    return saved === "bracket" ? "bracket" : "list";
+    return saved === "list" ? "list" : "bracket";
   }
 
   updateChrome();
