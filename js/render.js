@@ -6,7 +6,8 @@
     const TAG_BASE = 0xe0000;
     return String.fromCodePoint(
       0x1f3f4,
-      ...letters.map((c) => TAG_BASE + c.toLowerCase().charCodeAt(0))
+      ...letters.map((c) => TAG_BASE + c.toLowerCase().charCodeAt(0)),
+      0xe007f
     );
   }
 
